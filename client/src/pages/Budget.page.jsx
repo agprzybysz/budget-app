@@ -14,7 +14,7 @@ import {
 } from 'ui';
 import { Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BudgetService } from '../api';
 
 export const BudgetPage = () => {
@@ -63,9 +63,6 @@ export const BudgetPage = () => {
       },
     },
   ];
-
-  const getUniqueId = (arr) => arr.id;
-
   let rows = [];
   if (isSuccess && data.length > 0) {
     rows = data.map((item) => {
@@ -85,6 +82,27 @@ export const BudgetPage = () => {
       return properties;
     });
   }
+
+  const getUniqueId = (arr) => arr.id;
+
+  const queryClient = useQueryClient();
+  const deleteRecordsMutation = useMutation({
+    mutationFn: (ids) => {
+      console.log(ids);
+      return BudgetService.remove(ids);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgetData'] });
+    },
+  });
+
+  const deleteRecords = (selectedRecords) =>
+    deleteRecordsMutation.mutate({ ids: selectedRecords });
+
+  useMutation((id) => {
+    console.log(id);
+    return BudgetService.remove(id);
+  });
 
   return (
     <Page title="Budżet">
@@ -117,6 +135,7 @@ export const BudgetPage = () => {
                 rows={rows}
                 headCells={columns}
                 getUniqueId={getUniqueId}
+                deleteRecords={deleteRecords}
               />
             )}
           </Grid>
