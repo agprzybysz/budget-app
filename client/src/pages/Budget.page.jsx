@@ -88,7 +88,6 @@ export const BudgetPage = () => {
   const queryClient = useQueryClient();
   const deleteRecordsMutation = useMutation({
     mutationFn: (ids) => {
-      console.log(ids);
       return BudgetService.remove(ids);
     },
     onSuccess: () => {
@@ -100,7 +99,6 @@ export const BudgetPage = () => {
     deleteRecordsMutation.mutate({ ids: selectedRecords });
 
   useMutation((id) => {
-    console.log(id);
     return BudgetService.remove(id);
   });
 
