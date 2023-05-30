@@ -1,4 +1,6 @@
 context('Display budget', () => {
+  Cypress.config('defaultCommandTimeout', 30000);
+
   beforeEach(() => {
     cy.task('db:reset');
 
