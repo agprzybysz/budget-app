@@ -27,7 +27,7 @@ const StyledButton = styled(MuiButton)({
     },
     '&:disabled': {
       backgroundColor: 'rgba(51, 51, 51, 0.07)',
-      color: 'rgba(51, 51, 51, 0.25)'
+      color: 'rgba(51, 51, 51, 0.25)',
     },
   },
   '&.MuiButton-containedError': {
@@ -41,11 +41,11 @@ const StyledButton = styled(MuiButton)({
     },
     '&:active': {
       backgroundColor: '#FCECE6',
-      color: '#FF5D5D'
+      color: '#FF5D5D',
     },
     '&:disabled': {
       backgroundColor: 'rgba(51, 51, 51, 0.07)',
-      color: 'rgba(51, 51, 51, 0.25)'
+      color: 'rgba(51, 51, 51, 0.25)',
     },
   },
   '&.MuiButton-containedSuccess': {
@@ -59,11 +59,11 @@ const StyledButton = styled(MuiButton)({
     },
     '&:active': {
       backgroundColor: '#DBEBDB',
-      color: '#00A980'
+      color: '#00A980',
     },
     '&:disabled': {
       backgroundColor: 'rgba(51, 51, 51, 0.07)',
-      color: 'rgba(51, 51, 51, 0.25)'
+      color: 'rgba(51, 51, 51, 0.25)',
     },
   },
   '&.MuiButton-containedWarning': {
@@ -77,11 +77,11 @@ const StyledButton = styled(MuiButton)({
     },
     '&:active': {
       backgroundColor: '#FFF5D2',
-      color: '#B28C09'
+      color: '#B28C09',
     },
     '&:disabled': {
       backgroundColor: 'rgba(51, 51, 51, 0.07)',
-      color: 'rgba(51, 51, 51, 0.25)'
+      color: 'rgba(51, 51, 51, 0.25)',
     },
   },
   '&.MuiButton-outlinedPrimary': {
@@ -99,9 +99,8 @@ const StyledButton = styled(MuiButton)({
     '&:disabled': {
       backgroundColor: 'rgba(51, 51, 51, 0.07)',
       color: 'rgba(51, 51, 51, 0.25)',
-      borderColor: 'rgba(51, 51, 51, 0.07)'
-      
-    }
+      borderColor: 'rgba(51, 51, 51, 0.07)',
+    },
   },
   '&.MuiButton-outlinedError': {
     backgroundColor: '#FFFFFF',
@@ -119,7 +118,7 @@ const StyledButton = styled(MuiButton)({
       backgroundColor: '#FFFFFF',
       color: 'rgba(51, 51, 51, 0.25)',
       borderColor: '#FFFFFF',
-    }
+    },
   },
   '&.MuiButton-outlinedSuccess': {
     backgroundColor: '#FFFFFF',
@@ -127,17 +126,17 @@ const StyledButton = styled(MuiButton)({
     border: '1px solid #66BB6A',
     '&:hover': {
       backgroundColor: '#DBEBDB',
-      color: '#00A980'
+      color: '#00A980',
     },
     '&:active': {
       backgroundColor: '#DBEBDB',
-      color: '#00A980'
+      color: '#00A980',
     },
     '&:disabled': {
       backgroundColor: '#FFFFFF',
       color: 'rgba(51, 51, 51, 0.25)',
       borderColor: '#FFFFFF',
-    }
+    },
   },
   '&.MuiButton-outlinedWarning': {
     backgroundColor: '#FFFFFF',
@@ -145,17 +144,17 @@ const StyledButton = styled(MuiButton)({
     border: '1px solid #FFA726',
     '&:hover': {
       backgroundColor: '#FFF5D2',
-      color: '#FFA726'
+      color: '#FFA726',
     },
     '&:active': {
       backgroundColor: '#FFF5D2',
-      color: '#FFA726'
+      color: '#FFA726',
     },
     '&:disabled': {
       backgroundColor: '#FFFFFF',
       color: 'rgba(51, 51, 51, 0.25)',
       borderColor: '#FFFFFF',
-    }
+    },
   },
   'span.MuiButton-startIcon, span.MuiButton-endIcon': {
     margin: 0,
@@ -170,35 +169,35 @@ const StyledButton = styled(MuiButton)({
     paddingLeft: '22px',
   },
   '&.button-iconright svg': {
-    marginLeft: '4px'
+    marginLeft: '4px',
   },
   '&.button-iconleft': {
     paddingRight: '12px',
     paddingLeft: '8px',
   },
   '&.button-iconleft svg': {
-    marginRight: '4px'
-  }
+    marginRight: '4px',
+  },
 });
 
 export function Button({ children, variant, color, disabled, size, ...props }) {
   return (
-      <StyledButton   
-        variant={variant} 
-        color={color} 
-        disabled={disabled} 
-        size={size} 
-        onClick={() => console.log('clicked')}
-        {...props}
-      >
-        {children}
-      </StyledButton>
-    );
+    <StyledButton
+      variant={variant}
+      color={color}
+      disabled={disabled}
+      size={size}
+      onClick={() => console.log('clicked')}
+      {...props}
+    >
+      {children}
+    </StyledButton>
+  );
 }
 
 Button.propTypes = {
   variant: PropTypes.oneOf(['contained', 'outlined']),
-  color: PropTypes.oneOf(['primary', 'error', 'success', 'warning']), 
+  color: PropTypes.oneOf(['primary', 'error', 'success', 'warning']),
   size: PropTypes.oneOf(['large', 'medium', 'small']),
-  disabled: PropTypes.bool, 
-}
+  disabled: PropTypes.bool,
+};

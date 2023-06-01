@@ -14,7 +14,7 @@ export class LedgerService {
    * @throws ApiError
    */
   static findAll() {
-// TODO: Implement me
+    // TODO: Implement me
   }
 
   /**
