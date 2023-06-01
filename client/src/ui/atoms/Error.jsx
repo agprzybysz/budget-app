@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import ErrorImage from '../../assets/unknown_error.png'
+import ErrorImage from '../../assets/unknown_error.png';
 
 export const Error = ({ error }) => {
   return (
@@ -8,31 +8,32 @@ export const Error = ({ error }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        flexDirection: 'column',     
+        flexDirection: 'column',
       }}
     >
-      <Box s
+      <Box
+        s
         sx={{
-          margin:'0 auto',
+          margin: '0 auto',
           display: 'flex',
           justifyContent: 'flex-start',
           alignItems: 'center',
           flexDirection: 'column',
         }}
       >
-        <Box 
+        <Box
           component="img"
-          src={ErrorImage} 
-          alt='no_content' 
+          src={ErrorImage}
+          alt="no_content"
           sx={{ height: '202px', width: '202px' }}
         />
-        <Typography 
+        <Typography
           sx={{
             color: 'rgba(51, 51, 51, 0.5)',
             fontSize: '19.2px',
             lineHeigth: '28.8px',
             fontFamily: 'Inter, sans-serif',
-            fontWeight: '400'
+            fontWeight: '400',
           }}
         >
           Wystąpił nieoczekiwany błąd
