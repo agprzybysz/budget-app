@@ -5,8 +5,13 @@ export class LedgerService {
    * @returns any
    * @throws ApiError
    */
-  static create() {
-    // TODO: Implement me
+  static create({ requestBody }) {
+    return request({
+      method: 'POST',
+      path: `/ledger`,
+      body: requestBody,
+      mediaType: 'application/json',
+    });
   }
 
   /**
@@ -14,7 +19,10 @@ export class LedgerService {
    * @throws ApiError
    */
   static findAll() {
-    // TODO: Implement me
+    return request({
+      method: 'GET',
+      path: `/ledger`,
+    });
   }
 
   /**
@@ -22,7 +30,10 @@ export class LedgerService {
    * @throws ApiError
    */
   static findOne({ id }) {
-    // TODO: Implement me
+    return request({
+      method: 'GET',
+      path: `/ledger/${id}`,
+    });
   }
 
   /**
@@ -30,7 +41,12 @@ export class LedgerService {
    * @throws ApiError
    */
   static update({ id, requestBody }) {
-    // TODO: Implement me
+    return request({
+      method: 'PATCH',
+      path: `/ledger/${id}`,
+      body: requestBody,
+      mediaType: 'application/json',
+    });
   }
 
   /**
@@ -38,6 +54,15 @@ export class LedgerService {
    * @throws ApiError
    */
   static remove({ ids }) {
-    // TODO: Implement me
+    return ids.length === 1
+      ? request({
+          method: 'DELETE',
+          path: `/ledger/${ids[0]}`,
+        })
+      : request({
+          method: 'DELETE',
+          path: `/ledger`,
+          body: { ids },
+        });
   }
 }
