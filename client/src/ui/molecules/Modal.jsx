@@ -1,7 +1,4 @@
 import * as React from 'react';
-//import Box from '@mui/material/Box';
-//import Button from '@mui/material/Button';
-//import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -9,17 +6,20 @@ import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import { Button } from 'ui';
 
-const style = {
+const styleModal = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 450,
+  width: '450px',
+  height: '197px',
   backgroundColor: '#FFFFFF',
   boxShadow: '0px 2px 10px rgba(17, 25, 69, 0.1)',
-  //border: '2px solid #000',
-  borderRadius: '8px',
-  p: 4,
+  borderRadius: '18px',
+  padding: '40px 32px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
 };
 
 export function AppModal({
@@ -29,7 +29,6 @@ export function AppModal({
   isOpen,
   handleClose,
 }) {
-  // onClick={() => console.log('onSubmit')}
   const onClose = handleClose;
   const onSubmit = () => console.log('submit');
   return (
@@ -40,14 +39,15 @@ export function AppModal({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Card sx={{ style }}>
+        <Card sx={styleModal}>
           <CardHeader
             id="modal-modal-title"
             title={description}
             component="h4"
+            sx={{ margin: 0, fontWeight: 'bold' }}
           />
           <CardContent id="modal-modal-description">{children}</CardContent>
-          <CardActions>
+          <CardActions sx={{ padding: 0, justifyContent: 'flex-end' }}>
             <Button
               variant={'outlined'}
               color={'primary'}

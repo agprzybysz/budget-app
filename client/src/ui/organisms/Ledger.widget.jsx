@@ -71,22 +71,22 @@ export const LedgerWidget = () => {
       },
     },
   ];
-  let rows = [];
-  if (isSuccess && data.length > 0) {
-    rows = data.map((item) => {
-      const properties = {
-        id: item.id,
-        name: item.title,
-        categoryName: item.category.name,
-        categoryColor: item.category.color,
-        createdAt: item.createdAt,
-        mode: item.mode,
-        amountInCents: item.amountInCents,
-      };
-      return properties;
-    });
-  }
+  const rows =
+    isSuccess && data.length > 0
+      ? data.map((item) => {
+          return {
+            id: item.id,
+            name: item.title,
+            categoryName: item.category.name,
+            categoryColor: item.category.color,
+            createdAt: item.createdAt,
+            mode: item.mode,
+            amountInCents: item.amountInCents,
+          };
+        })
+      : [];
 
+  console.log(rows);
   const getUniqueId = (arr) => arr.id;
 
   const queryClient = useQueryClient();

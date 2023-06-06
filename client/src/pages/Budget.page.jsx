@@ -126,15 +126,15 @@ export const BudgetPage = () => {
                 >
                   Zdefiniuj budżet
                 </Button>
-                <AddNewBudgetRecord
-                  isOpen={showModal}
-                  handleClose={() => setShowModal(false)}
-                />
               </>
             )}
           />
         }
       >
+        <AddNewBudgetRecord
+          isOpen={showModal}
+          handleClose={() => setShowModal(false)}
+        />
         <Grid container>
           <Grid item xs={12} container justifyContent="center">
             {isLoading && <Loader />}
