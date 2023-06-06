@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ActionHeader,
   Card,
@@ -16,6 +16,7 @@ import { Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BudgetService } from '../api';
+import { AddNewBudgetRecord } from '../ui/organisms/AddNewBudgetRecord.modal';
 
 export const BudgetPage = () => {
   const getBudgetData = async () => {
@@ -102,6 +103,8 @@ export const BudgetPage = () => {
     return BudgetService.remove(id);
   });
 
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <Page title="Budżet">
       <Card
@@ -110,15 +113,24 @@ export const BudgetPage = () => {
             variant={'h1'}
             title="Budżet"
             renderActions={() => (
-              <Button
-                variant={'contained'}
-                color={'primary'}
-                size={'large'}
-                startIcon={<AddIcon />}
-                className="button-iconleft"
-              >
-                Zdefiniuj budżet
-              </Button>
+              <>
+                <Button
+                  variant={'contained'}
+                  color={'primary'}
+                  size={'large'}
+                  startIcon={<AddIcon />}
+                  className="button-iconleft"
+                  onClick={() => {
+                    setShowModal(true);
+                  }}
+                >
+                  Zdefiniuj budżet
+                </Button>
+                <AddNewBudgetRecord
+                  isOpen={showModal}
+                  handleClose={() => setShowModal(false)}
+                />
+              </>
             )}
           />
         }

@@ -17,7 +17,6 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LedgerService } from 'api';
-import { AppModal } from '../molecules/Modal';
 import { AddNewLedgerRecord } from './AddNewLedgerRecord.modal';
 
 export const LedgerWidget = () => {
@@ -146,7 +145,6 @@ export const LedgerWidget = () => {
                   isOpen={showModal}
                   handleClose={() => setShowModal(false)}
                   type={type}
-                  children="dodaj"
                 />
               </div>
             )}
