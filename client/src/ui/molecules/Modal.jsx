@@ -29,15 +29,11 @@ export function AppModal({
   isOpen,
   handleClose,
 }) {
-  /*const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);*/
-  // onClick={() => console.log('onClose') // handleClose}
   // onClick={() => console.log('onSubmit')}
   const onClose = handleClose;
+  const onSubmit = () => console.log('submit');
   return (
     <div>
-      {/*<Button onClick={handleOpen}>Open modal</Button>*/}
       <Modal
         open={isOpen}
         onClose={handleClose}
@@ -65,6 +61,7 @@ export function AppModal({
               color={'primary'}
               size={'large'}
               disabled={disabled}
+              onClick={onSubmit}
             >
               Zapisz
             </Button>
