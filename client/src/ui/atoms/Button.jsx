@@ -187,7 +187,7 @@ export function Button({ children, variant, color, disabled, size, ...props }) {
       color={color}
       disabled={disabled}
       size={size}
-      onClick={() => console.log('clicked')}
+      //onClick={() => console.log('clicked')}
       {...props}
     >
       {children}
