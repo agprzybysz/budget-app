@@ -105,6 +105,13 @@ export const BudgetPage = () => {
 
   const [showModal, setShowModal] = useState(false);
 
+  const handleCloseModal = () => setShowModal(false);
+
+  const handleSubmit = () => {
+    console.log('submit Budget');
+    setShowModal(false);
+  };
+
   return (
     <Page title="Budżet">
       <Card
@@ -133,7 +140,8 @@ export const BudgetPage = () => {
       >
         <AddNewBudgetRecord
           isOpen={showModal}
-          handleClose={() => setShowModal(false)}
+          handleClose={handleCloseModal}
+          handleSubmit={handleSubmit}
         />
         <Grid container>
           <Grid item xs={12} container justifyContent="center">

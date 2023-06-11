@@ -86,7 +86,6 @@ export const LedgerWidget = () => {
         })
       : [];
 
-  console.log(rows);
   const getUniqueId = (arr) => arr.id;
 
   const queryClient = useQueryClient();
@@ -105,6 +104,17 @@ export const LedgerWidget = () => {
   const [showModal, setShowModal] = useState(false);
   const [type, setTypeModal] = useState('');
 
+  const handleCloseModal = () => setShowModal(false);
+  const handleSubmit = () => {
+    console.log('submit Ledger');
+    setShowModal(false);
+  };
+
+  const setOpenModal = (typeModal) => {
+    setShowModal(true);
+    setTypeModal(typeModal);
+  };
+
   return (
     <>
       <Card
@@ -120,10 +130,7 @@ export const LedgerWidget = () => {
                   size={'large'}
                   startIcon={<AddIcon />}
                   className="button-iconleft"
-                  onClick={() => {
-                    setShowModal(true);
-                    setTypeModal('INCOME');
-                  }}
+                  onClick={() => setOpenModal('INCOME')}
                 >
                   Wpłać
                 </Button>
@@ -133,18 +140,16 @@ export const LedgerWidget = () => {
                   size={'large'}
                   startIcon={<RemoveIcon />}
                   className="button-iconleft"
-                  onClick={() => {
-                    setShowModal(true);
-                    setTypeModal('EXPENSE');
-                  }}
+                  onClick={() => setOpenModal('EXPENSE')}
                 >
                   Wypłać
                 </Button>
 
                 <AddNewLedgerRecord
                   isOpen={showModal}
-                  handleClose={() => setShowModal(false)}
+                  handleClose={handleCloseModal}
                   type={type}
+                  handleSubmit={handleSubmit}
                 />
               </div>
             )}

@@ -28,9 +28,8 @@ export function AppModal({
   disabled,
   isOpen,
   handleClose,
+  handleSubmit,
 }) {
-  const onClose = handleClose;
-  const onSubmit = () => console.log('submit');
   return (
     <div>
       <Modal
@@ -52,7 +51,7 @@ export function AppModal({
               variant={'outlined'}
               color={'primary'}
               size={'large'}
-              onClick={onClose}
+              onClick={handleClose}
             >
               Anuluj
             </Button>
@@ -61,7 +60,7 @@ export function AppModal({
               color={'primary'}
               size={'large'}
               disabled={disabled}
-              onClick={onSubmit}
+              onClick={handleSubmit}
             >
               Zapisz
             </Button>
