@@ -1,9 +1,9 @@
 import React from 'react';
-import { AppModal } from '../molecules/Modal';
+import { Modal } from 'ui';
 
 export const AddNewBudgetRecord = ({ isOpen, handleClose }) => {
   return (
-    <AppModal
+    <Modal
       isOpen={isOpen}
       handleClose={handleClose}
       description="Zdefiniuj budżet"

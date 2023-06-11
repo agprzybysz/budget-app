@@ -11,12 +11,12 @@ import {
   Money,
   LocalizedDate,
   CategoryCell,
+  AddNewBudgetRecord,
 } from 'ui';
 import { Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BudgetService } from '../api';
-import { AddNewBudgetRecord } from '../ui/organisms/AddNewBudgetRecord.modal';
 
 export const BudgetPage = () => {
   const getBudgetData = async () => {

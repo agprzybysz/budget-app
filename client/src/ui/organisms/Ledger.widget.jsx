@@ -11,13 +11,13 @@ import {
   CategoryCell,
   Money,
   LocalizedDate,
+  AddNewLedgerRecord,
 } from 'ui';
 import { Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LedgerService } from 'api';
-import { AddNewLedgerRecord } from './AddNewLedgerRecord.modal';
 
 export const LedgerWidget = () => {
   const getLedgerData = async () => {

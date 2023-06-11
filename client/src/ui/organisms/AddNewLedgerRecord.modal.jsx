@@ -1,17 +1,17 @@
 import React from 'react';
-import { AppModal } from '../molecules/Modal';
+import { Modal } from 'ui';
 
 export const AddNewLedgerRecord = ({ type, isOpen, handleClose }) => {
   return (
     <>
       {type === 'INCOME' ? (
-        <AppModal
+        <Modal
           isOpen={isOpen}
           handleClose={handleClose}
           description="Dodaj wpływ"
         />
       ) : type === 'EXPENSE' ? (
-        <AppModal
+        <Modal
           isOpen={isOpen}
           handleClose={handleClose}
           description="Dodaj wydatek"
