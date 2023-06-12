@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, CategoryCell } from 'ui';
 import { CategoryService } from 'api';
 import {
@@ -11,9 +11,12 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 
-export const AddNewLedgerRecord = ({ type, isOpen, handleClose }) => {
-  //pobieramy kategorie
-
+export const AddNewLedgerRecord = ({
+  type,
+  isOpen,
+  handleClose,
+  addNewLedgerData,
+}) => {
   const defaultValues =
     type === 'INCOME'
       ? {
@@ -25,6 +28,12 @@ export const AddNewLedgerRecord = ({ type, isOpen, handleClose }) => {
           name: '',
           selectedCategory: '',
         };
+
+  const [values, setValues] = useState(defaultValues);
+
+  const handleChange = (value) => {
+    setValues(value);
+  };
 
   const getExpenseCategory = async () => {
     return await CategoryService.findAll();
@@ -39,23 +48,33 @@ export const AddNewLedgerRecord = ({ type, isOpen, handleClose }) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm(defaultValues);
+  } = useForm();
 
-  const addData = (dataSubmitted) => console.log(dataSubmitted);
+  const addData = (dataSubmitted) => addNewLedgerData(dataSubmitted);
+
+  useEffect(() => {
+    if (isOpen) setValues(defaultValues);
+  }, [isOpen]);
 
   const getContent = (data, type) => (
     <form>
-      <FormControl fullWidth>
+      <FormControl fullWidth sx={{ mb: 4 }}>
         <TextField
           type="text"
           variant="outlined"
           placeholder="Nazwa"
           name="name"
           {...register('name', { required: true })}
-          sx={{ mb: 4 }}
+          onChange={(event) =>
+            handleChange({ ...values, name: event.target.value })
+          }
+          value={values.name}
         />
+        {errors?.name?.type === 'required' && (
+          <span>Nazwa nie może być pusta</span>
+        )}
       </FormControl>
-      <FormControl fullWidth>
+      <FormControl fullWidth sx={{ mb: 4 }}>
         <TextField
           type="number"
           variant="outlined"
@@ -69,11 +88,17 @@ export const AddNewLedgerRecord = ({ type, isOpen, handleClose }) => {
               lessThanMillion: (x) => parseFloat(x) < 1000000,
             },
           })}
-          sx={{ mb: 4 }}
+          onChange={(event) =>
+            handleChange({ ...values, amount: event.target.value })
+          }
+          value={values.amount}
         />
+        {errors?.amount?.type === 'required' && (
+          <span>Kwota nie może być pusta</span>
+        )}
       </FormControl>
       {type === 'EXPENSE' && (
-        <FormControl fullWidth>
+        <FormControl fullWidth sx={{ mb: 4 }}>
           <InputLabel id="category-select-label">Wybierz kategorie</InputLabel>
           <Select
             labelId="category-select-label"
@@ -81,7 +106,10 @@ export const AddNewLedgerRecord = ({ type, isOpen, handleClose }) => {
             variant="outlined"
             name="selectedCategory"
             {...register('selectedCategory', { required: true })}
-            sx={{ mb: 4 }}
+            onChange={(event) =>
+              handleChange({ ...values, selectedCategory: event.target.value })
+            }
+            value={values.selectedCategory}
           >
             {data.map((option) => (
               <MenuItem key={option.id} value={option.name}>
@@ -89,6 +117,9 @@ export const AddNewLedgerRecord = ({ type, isOpen, handleClose }) => {
               </MenuItem>
             ))}
           </Select>
+          {errors?.selectedCategory?.type === 'required' && (
+            <span>Wybierz kategorię</span>
+          )}
         </FormControl>
       )}
     </form>

@@ -111,6 +111,11 @@ export const LedgerWidget = () => {
     setTypeModal(typeModal);
   };
 
+  const addNewLedgerData = (data) => {
+    console.log(data);
+    setShowModal(false);
+  };
+
   return (
     <>
       <Card
@@ -145,6 +150,7 @@ export const LedgerWidget = () => {
                   isOpen={showModal}
                   handleClose={handleCloseModal}
                   type={type}
+                  addNewLedgerData={addNewLedgerData}
                 />
               </div>
             )}
