@@ -69,7 +69,9 @@ export const BudgetPage = () => {
     rows = data.map((item) => {
       let properties = {
         id: item.id,
-        category: <CategoryCell name={item.category.name} color="#37C4D7" />,
+        category: (
+          <CategoryCell name={item.category.name} color={item.category.color} />
+        ),
         amountInCents: <Money inCents={item.amountInCents} />,
         currentSpending: <Money inCents={item.currentSpending} />,
         budgetStatus:
@@ -107,11 +109,6 @@ export const BudgetPage = () => {
 
   const handleCloseModal = () => setShowModal(false);
 
-  const handleSubmit = () => {
-    console.log('submit Budget');
-    setShowModal(false);
-  };
-
   return (
     <Page title="Budżet">
       <Card
@@ -138,11 +135,7 @@ export const BudgetPage = () => {
           />
         }
       >
-        <AddNewBudgetRecord
-          isOpen={showModal}
-          handleClose={handleCloseModal}
-          handleSubmit={handleSubmit}
-        />
+        <AddNewBudgetRecord isOpen={showModal} handleClose={handleCloseModal} />
         <Grid container>
           <Grid item xs={12} container justifyContent="center">
             {isLoading && <Loader />}
