@@ -105,10 +105,6 @@ export const LedgerWidget = () => {
   const [type, setTypeModal] = useState('');
 
   const handleCloseModal = () => setShowModal(false);
-  const handleSubmit = () => {
-    console.log('submit Ledger');
-    setShowModal(false);
-  };
 
   const setOpenModal = (typeModal) => {
     setShowModal(true);
@@ -149,7 +145,6 @@ export const LedgerWidget = () => {
                   isOpen={showModal}
                   handleClose={handleCloseModal}
                   type={type}
-                  handleSubmit={handleSubmit}
                 />
               </div>
             )}
