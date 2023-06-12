@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, CategoryCell } from 'ui';
 import { CategoryService } from 'api';
 import {
@@ -11,33 +11,44 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 
-export const AddNewBudgetRecord = ({ isOpen, handleClose }) => {
-  const defaultValues = {
-    amount: '',
-    selectedCategory: '',
-  };
+const defaultValues = {
+  amount: '',
+  selectedCategory: '',
+};
 
+export const AddNewBudgetRecord = ({ isOpen, handleClose, addNewBudgetData }) => {
+  const [values, setValues] = useState(defaultValues);
+
+  const handleChange = (value) => {
+    setValues(value);
+  };
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm(defaultValues);
+  } = useForm();
 
-  const addData = (dataSubmitted) => console.log(dataSubmitted);
+  const addData = (dataSubmitted) => {
+    addNewBudgetData(dataSubmitted);
+  
+  };
 
-  //pobieramy kategorie
-  const getExpenseCategory = async () => {
+  const getBudgetCategory = async () => {
     return await CategoryService.findAll(true);
   };
 
   const { data } = useQuery({
-    queryKey: ['expenseCategory'],
-    queryFn: () => getExpenseCategory(),
+    queryKey: ['budgetCategory'],
+    queryFn: () => getBudgetCategory(),
   });
+
+  useEffect(() => {
+    if (isOpen) setValues(defaultValues);
+  }, [isOpen]);
 
   const getContent = (data) => (
     <form>
-      <FormControl fullWidth>
+      <FormControl fullWidth sx={{ mb: 4 }}>
         <TextField
           type="number"
           variant="outlined"
@@ -51,10 +62,16 @@ export const AddNewBudgetRecord = ({ isOpen, handleClose }) => {
               lessThanMillion: (x) => parseFloat(x) < 1000000,
             },
           })}
-          sx={{ mb: 4 }}
+          onChange={(event) =>
+            handleChange({ ...values, amount: event.target.value })
+          }
+          value={values.amount}
         />
+        {errors?.amount?.type === 'required' && (
+          <span>Kwota nie może być pusta</span>
+        )}
       </FormControl>
-      <FormControl fullWidth>
+      <FormControl fullWidth sx={{ mb: 4 }}>
         <InputLabel id="category-select-label">Wybierz kategorie</InputLabel>
         <Select
           labelId="category-select-label"
@@ -62,7 +79,10 @@ export const AddNewBudgetRecord = ({ isOpen, handleClose }) => {
           variant="outlined"
           name="selectedCategory"
           {...register('selectedCategory', { required: true })}
-          sx={{ mb: 4 }}
+          onChange={(event) =>
+            handleChange({ ...values, selectedCategory: event.target.value })
+          }
+          value={values.selectedCategory}
         >
           {data.map((option) => (
             <MenuItem key={option.id} value={option.name}>
@@ -70,6 +90,9 @@ export const AddNewBudgetRecord = ({ isOpen, handleClose }) => {
             </MenuItem>
           ))}
         </Select>
+        {errors?.selectedCategory?.type === 'required' && (
+          <span>Wybierz kategorię</span>
+        )}
       </FormControl>
     </form>
   );

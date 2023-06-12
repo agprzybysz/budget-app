@@ -109,6 +109,11 @@ export const BudgetPage = () => {
 
   const handleCloseModal = () => setShowModal(false);
 
+  const addNewBudgetData = (data) => {
+    console.log(data);
+    setShowModal(false);
+  };
+
   return (
     <Page title="Budżet">
       <Card
@@ -135,7 +140,11 @@ export const BudgetPage = () => {
           />
         }
       >
-        <AddNewBudgetRecord isOpen={showModal} handleClose={handleCloseModal} />
+        <AddNewBudgetRecord
+          isOpen={showModal}
+          handleClose={handleCloseModal}
+          addNewBudgetData={addNewBudgetData}
+        />
         <Grid container>
           <Grid item xs={12} container justifyContent="center">
             {isLoading && <Loader />}
