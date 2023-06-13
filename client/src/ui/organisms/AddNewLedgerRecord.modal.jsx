@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Modal, CategoryCell } from 'ui';
 import { CategoryService } from 'api';
-import { FormControl, TextField, MenuItem } from '@mui/material';
+import { TextField, MenuItem } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
@@ -27,24 +27,27 @@ export const AddNewLedgerRecord = ({
           categoryId: '',
         };
 
-  const [values, setValues] = useState(defaultValues);
-
-  //console.log(values);
-
-  const handleChange = (value) => {
-    setValues(value);
-  };
-
-  const validationSchema = yup.object().shape({
-    amountInCents: yup
-      .number('Kwota musi być numerem')
-      .typeError('Kwota nie może być pusta')
-      .required('Kwota nie moze być pusta')
-      .positive('Kwota musi być większa niż 0')
-      .lessThan(1000000, 'Kwota nie może być większa niż 1000000'),
-    title: yup.string().trim().required('Nazwa nie może być pusta'),
-    categoryId: yup.string().required('Wybierz kategorię'),
-  });
+  const validationSchema =
+    type === 'INCOME'
+      ? yup.object().shape({
+          amountInCents: yup
+            .number('Kwota musi być numerem')
+            .typeError('Kwota nie może być pusta')
+            .required('Kwota nie moze być pusta')
+            .positive('Kwota musi być większa niż 0')
+            .lessThan(1000000, 'Kwota nie może być większa niż 1000000'),
+          title: yup.string().trim().required('Nazwa nie może być pusta'),
+        })
+      : yup.object().shape({
+          amountInCents: yup
+            .number('Kwota musi być numerem')
+            .typeError('Kwota nie może być pusta')
+            .required('Kwota nie moze być pusta')
+            .positive('Kwota musi być większa niż 0')
+            .lessThan(1000000, 'Kwota nie może być większa niż 1000000'),
+          title: yup.string().trim().required('Nazwa nie może być pusta'),
+          categoryId: yup.string().required('Wybierz kategorię'),
+        });
 
   const getExpenseCategory = async () => {
     return await CategoryService.findAll();
@@ -56,78 +59,96 @@ export const AddNewLedgerRecord = ({
   });
 
   const {
-    register,
     handleSubmit,
+    control,
+    reset,
     formState: { errors },
   } = useForm({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
     resolver: yupResolver(validationSchema),
+    defaultValues: defaultValues,
   });
 
-  const addData = (dataSubmitted) =>
-    addNewLedgerData({ ...dataSubmitted, mode: type });
+  console.log(defaultValues);
+
+  const addData = (dataSubmitted) => {
+    console.log(dataSubmitted);
+    addNewLedgerData({ ...dataSubmitted });
+  };
 
   useEffect(() => {
-    if (isOpen) setValues(defaultValues);
+    if (isOpen) reset();
   }, [isOpen]);
 
   const getContent = (data, type) => (
     <form noValidate autoComplete="off">
-      <FormControl fullWidth sx={{ mb: 4 }}>
-        <TextField
-          type="text"
-          variant="outlined"
-          placeholder="Nazwa"
-          name="title"
-          {...register('title')}
-          onChange={(event) =>
-            handleChange({ ...values, title: event.target.value })
-          }
-          error={errors.title ? true : false}
-          helperText={errors.title?.message}
-          value={values.title}
-        />
-      </FormControl>
-      <FormControl fullWidth sx={{ mb: 4 }}>
-        <TextField
-          type="number"
-          variant="outlined"
-          placeholder="Kwota"
-          name="amountInCents"
-          {...register('amountInCents')}
-          error={errors.amountInCents ? true : false}
-          helperText={errors.amountInCents?.message}
-          onChange={(event) =>
-            handleChange({ ...values, amountInCents: event.target.value })
-          }
-          value={values.amountInCents}
-        />
-        {errors?.amountInCents?.type === 'required' && (
-          <span>Kwota nie może być pusta</span>
-        )}
-      </FormControl>
-      {type === 'EXPENSE' && (
-        <FormControl fullWidth sx={{ mb: 4 }}>
+      <Controller
+        name={'title'}
+        control={control}
+        render={({ field: { onChange, value }, formState }) => (
           <TextField
-            select
+            type="text"
             variant="outlined"
-            name="categoryId"
-            {...register('categoryId')}
-            error={errors.categoryId ? true : false}
-            helperText={errors.categoryId?.message}
-            onChange={(event) =>
-              handleChange({ ...values, categoryId: event.target.value })
-            }
-            value={values.categoryId}
-          >
-            {data.map((option) => (
-              <MenuItem key={option.id} value={option.id}>
-                <CategoryCell name={option.name} color={option.color} />
-              </MenuItem>
-            ))}
-          </TextField>
-        </FormControl>
+            placeholder="Nazwa"
+            label="Nazwa"
+            error={errors.title ? true : false}
+            helperText={errors.title?.message}
+            onChange={onChange}
+            value={value}
+            fullWidth
+            sx={{ mb: 4 }}
+          />
+        )}
+      />
+      <Controller
+        name={'amountInCents'}
+        control={control}
+        render={({
+          field: { onChange, value },
+          fieldState: { error },
+          formState,
+        }) => (
+          <TextField
+            type="number"
+            variant="outlined"
+            placeholder="Kwota"
+            label="Kwota"
+            error={errors.amountInCents ? true : false}
+            helperText={errors.amountInCents?.message}
+            onChange={onChange}
+            value={value}
+            fullWidth
+            sx={{ mb: 4 }}
+          />
+        )}
+      />
+      {type === 'EXPENSE' && (
+        <Controller
+          name={'categoryId'}
+          control={control}
+          render={({
+            field: { onChange, value },
+            fieldState: { error },
+            formState,
+          }) => (
+            <TextField
+              select
+              variant="outlined"
+              label="Kategoria"
+              error={errors.categoryId ? true : false}
+              helperText={errors.categoryId?.message}
+              onChange={onChange}
+              value={value}
+              fullWidth
+              sx={{ mb: 4 }}
+            >
+              {data.map((option) => (
+                <MenuItem key={option.id} value={option.id}>
+                  <CategoryCell name={option.name} color={option.color} />
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
       )}
     </form>
   );

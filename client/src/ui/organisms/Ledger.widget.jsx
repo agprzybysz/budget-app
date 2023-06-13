@@ -128,9 +128,10 @@ export const LedgerWidget = () => {
 
   const addNewLedgerData = (data) => {
     addRecords(data);
-    //console.log(data)
     setShowModal(false);
   };
+
+  console.log('addLeger');
 
   return (
     <>
