@@ -98,8 +98,27 @@ export const BudgetPage = () => {
     },
   });
 
-  const deleteRecords = (selectedRecords) =>
+  const deleteRecords = (selectedRecords) => {
     deleteRecordsMutation.mutate({ ids: selectedRecords });
+  };
+
+  //add records
+  const addRescordsMutation = useMutation({
+    mutationFn: (requestBody) => {
+      return BudgetService.create(requestBody);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgetData'] });
+    },
+  });
+
+  const addRecords = (data) => {
+    /*const record = {
+      amountInCents: data.amount,
+      categoryId: data.selectedCategory,
+    };*/
+    addRescordsMutation.mutate({ requestBody: data });
+  };
 
   useMutation((id) => {
     return BudgetService.remove(id);
@@ -110,7 +129,7 @@ export const BudgetPage = () => {
   const handleCloseModal = () => setShowModal(false);
 
   const addNewBudgetData = (data) => {
-    console.log(data);
+    addRecords(data);
     setShowModal(false);
   };
 

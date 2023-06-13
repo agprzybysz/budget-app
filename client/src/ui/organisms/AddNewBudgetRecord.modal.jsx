@@ -10,27 +10,46 @@ import {
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 const defaultValues = {
-  amount: '',
-  selectedCategory: '',
+  amountInCents: '',
+  categoryId: '',
 };
 
-export const AddNewBudgetRecord = ({ isOpen, handleClose, addNewBudgetData }) => {
+export const AddNewBudgetRecord = ({
+  isOpen,
+  handleClose,
+  addNewBudgetData,
+}) => {
   const [values, setValues] = useState(defaultValues);
 
   const handleChange = (value) => {
     setValues(value);
   };
+
+  const validationSchema = yup.object().shape({
+    amountInCents: yup
+      .number()
+      .typeError('Kwota nie może być pusta')
+      .required('Kwota nie moze być pusta')
+      .min(0, 'Kwota musi być większa niż 0')
+      .max(1000000, 'Kwota nie może być większa niż '),
+    //categoryId: yup.string().required('Wybierz kategorię'),
+  });
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    resolver: yupResolver(validationSchema),
+  });
 
   const addData = (dataSubmitted) => {
     addNewBudgetData(dataSubmitted);
-  
   };
 
   const getBudgetCategory = async () => {
@@ -47,29 +66,21 @@ export const AddNewBudgetRecord = ({ isOpen, handleClose, addNewBudgetData }) =>
   }, [isOpen]);
 
   const getContent = (data) => (
-    <form>
+    <form noValidate autoComplete="off">
       <FormControl fullWidth sx={{ mb: 4 }}>
         <TextField
           type="number"
           variant="outlined"
           placeholder="Kwota"
-          name="amount"
-          {...register('amount', {
-            required: true,
-            valueAsNumber: true,
-            validate: {
-              moreThenZero: (x) => parseFloat(x) > 0,
-              lessThanMillion: (x) => parseFloat(x) < 1000000,
-            },
-          })}
+          name="amountInCents"
+          {...register('amountInCents')}
+          error={errors.amountInCents ? true : false}
+          helperText={errors.amountInCents?.message}
           onChange={(event) =>
-            handleChange({ ...values, amount: event.target.value })
+            handleChange({ ...values, amountInCents: event.target.value })
           }
-          value={values.amount}
+          value={values.amountInCents}
         />
-        {errors?.amount?.type === 'required' && (
-          <span>Kwota nie może być pusta</span>
-        )}
       </FormControl>
       <FormControl fullWidth sx={{ mb: 4 }}>
         <InputLabel id="category-select-label">Wybierz kategorie</InputLabel>
@@ -77,22 +88,21 @@ export const AddNewBudgetRecord = ({ isOpen, handleClose, addNewBudgetData }) =>
           labelId="category-select-label"
           id="category-select"
           variant="outlined"
-          name="selectedCategory"
-          {...register('selectedCategory', { required: true })}
+          name="categoryId"
+          {...register('categoryId')}
+          //serror={errors.categoryId ? true : false}
+          //helperText={errors.categoryId?.message}
           onChange={(event) =>
-            handleChange({ ...values, selectedCategory: event.target.value })
+            handleChange({ ...values, categoryId: event.target.value })
           }
-          value={values.selectedCategory}
+          value={values.categoryId}
         >
           {data.map((option) => (
-            <MenuItem key={option.id} value={option.name}>
+            <MenuItem key={option.id} value={option.id}>
               <CategoryCell name={option.name} color={option.color} />
             </MenuItem>
           ))}
         </Select>
-        {errors?.selectedCategory?.type === 'required' && (
-          <span>Wybierz kategorię</span>
-        )}
       </FormControl>
     </form>
   );
