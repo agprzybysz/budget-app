@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, CategoryCell } from 'ui';
 import { CategoryService } from 'api';
-import {
-  FormControl,
-  TextField,
-  Select,
-  MenuItem,
-  InputLabel,
-} from '@mui/material';
+import { FormControl, TextField, MenuItem } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 export const AddNewLedgerRecord = ({
   type,
@@ -39,6 +35,17 @@ export const AddNewLedgerRecord = ({
     setValues(value);
   };
 
+  const validationSchema = yup.object().shape({
+    amountInCents: yup
+      .number('Kwota musi być numerem')
+      .typeError('Kwota nie może być pusta')
+      .required('Kwota nie moze być pusta')
+      .positive('Kwota musi być większa niż 0')
+      .lessThan(1000000, 'Kwota nie może być większa niż 1000000'),
+    title: yup.string().trim().required('Nazwa nie może być pusta'),
+    categoryId: yup.string().required('Wybierz kategorię'),
+  });
+
   const getExpenseCategory = async () => {
     return await CategoryService.findAll();
   };
@@ -52,7 +59,11 @@ export const AddNewLedgerRecord = ({
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    resolver: yupResolver(validationSchema),
+  });
 
   const addData = (dataSubmitted) =>
     addNewLedgerData({ ...dataSubmitted, mode: type });
@@ -69,15 +80,14 @@ export const AddNewLedgerRecord = ({
           variant="outlined"
           placeholder="Nazwa"
           name="title"
-          {...register('title', { required: true })}
+          {...register('title')}
           onChange={(event) =>
             handleChange({ ...values, title: event.target.value })
           }
+          error={errors.title ? true : false}
+          helperText={errors.title?.message}
           value={values.title}
         />
-        {errors?.title?.type === 'required' && (
-          <span>Nazwa nie może być pusta</span>
-        )}
       </FormControl>
       <FormControl fullWidth sx={{ mb: 4 }}>
         <TextField
@@ -85,14 +95,9 @@ export const AddNewLedgerRecord = ({
           variant="outlined"
           placeholder="Kwota"
           name="amountInCents"
-          {...register('amountInCents', {
-            required: true,
-            valueAsNumber: true,
-            validate: {
-              moreThenZero: (x) => parseFloat(x) > 0,
-              lessThanMillion: (x) => parseFloat(x) < 1000000,
-            },
-          })}
+          {...register('amountInCents')}
+          error={errors.amountInCents ? true : false}
+          helperText={errors.amountInCents?.message}
           onChange={(event) =>
             handleChange({ ...values, amountInCents: event.target.value })
           }
@@ -104,13 +109,13 @@ export const AddNewLedgerRecord = ({
       </FormControl>
       {type === 'EXPENSE' && (
         <FormControl fullWidth sx={{ mb: 4 }}>
-          <InputLabel id="category-select-label">Wybierz kategorie</InputLabel>
-          <Select
-            labelId="category-select-label"
-            id="category-select"
+          <TextField
+            select
             variant="outlined"
             name="categoryId"
-            {...register('categoryId', { required: true })}
+            {...register('categoryId')}
+            error={errors.categoryId ? true : false}
+            helperText={errors.categoryId?.message}
             onChange={(event) =>
               handleChange({ ...values, categoryId: event.target.value })
             }
@@ -121,10 +126,7 @@ export const AddNewLedgerRecord = ({
                 <CategoryCell name={option.name} color={option.color} />
               </MenuItem>
             ))}
-          </Select>
-          {errors?.categoryId?.type === 'required' && (
-            <span>Wybierz kategorię</span>
-          )}
+          </TextField>
         </FormControl>
       )}
     </form>
