@@ -95,6 +95,7 @@ export const BudgetPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budgetData'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetCategory'] });
     },
   });
 
@@ -109,6 +110,7 @@ export const BudgetPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budgetData'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetCategory'] });
     },
   });
 

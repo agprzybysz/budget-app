@@ -107,7 +107,7 @@ export const LedgerWidget = () => {
       return LedgerService.create(requestBody);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgetData'] });
+      queryClient.invalidateQueries({ queryKey: ['ledgerData'] });
     },
   });
 
