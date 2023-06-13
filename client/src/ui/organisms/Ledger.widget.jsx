@@ -101,6 +101,21 @@ export const LedgerWidget = () => {
   const deleteRecords = (selectedRecords) =>
     deleteRecordsMutation.mutate({ ids: selectedRecords });
 
+  //add new record
+  const addRescordsMutation = useMutation({
+    mutationFn: (requestBody) => {
+      return LedgerService.create(requestBody);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgetData'] });
+    },
+  });
+
+  const addRecords = (data) => {
+    console.log(data);
+    addRescordsMutation.mutate({ requestBody: data });
+  };
+
   const [showModal, setShowModal] = useState(false);
   const [type, setTypeModal] = useState('');
 
@@ -112,7 +127,8 @@ export const LedgerWidget = () => {
   };
 
   const addNewLedgerData = (data) => {
-    console.log(data);
+    addRecords(data);
+    //console.log(data)
     setShowModal(false);
   };
 

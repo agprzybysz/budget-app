@@ -20,16 +20,20 @@ export const AddNewLedgerRecord = ({
   const defaultValues =
     type === 'INCOME'
       ? {
-          amount: '',
-          name: '',
+          mode: 'INCOME',
+          amountInCents: '',
+          title: '',
         }
       : {
-          amount: '',
-          name: '',
-          selectedCategory: '',
+          mode: 'EXPENSE',
+          amountInCents: '',
+          title: '',
+          categoryId: '',
         };
 
   const [values, setValues] = useState(defaultValues);
+
+  //console.log(values);
 
   const handleChange = (value) => {
     setValues(value);
@@ -50,27 +54,28 @@ export const AddNewLedgerRecord = ({
     formState: { errors },
   } = useForm();
 
-  const addData = (dataSubmitted) => addNewLedgerData(dataSubmitted);
+  const addData = (dataSubmitted) =>
+    addNewLedgerData({ ...dataSubmitted, mode: type });
 
   useEffect(() => {
     if (isOpen) setValues(defaultValues);
   }, [isOpen]);
 
   const getContent = (data, type) => (
-    <form>
+    <form noValidate autoComplete="off">
       <FormControl fullWidth sx={{ mb: 4 }}>
         <TextField
           type="text"
           variant="outlined"
           placeholder="Nazwa"
-          name="name"
-          {...register('name', { required: true })}
+          name="title"
+          {...register('title', { required: true })}
           onChange={(event) =>
-            handleChange({ ...values, name: event.target.value })
+            handleChange({ ...values, title: event.target.value })
           }
-          value={values.name}
+          value={values.title}
         />
-        {errors?.name?.type === 'required' && (
+        {errors?.title?.type === 'required' && (
           <span>Nazwa nie może być pusta</span>
         )}
       </FormControl>
@@ -79,8 +84,8 @@ export const AddNewLedgerRecord = ({
           type="number"
           variant="outlined"
           placeholder="Kwota"
-          name="amount"
-          {...register('amount', {
+          name="amountInCents"
+          {...register('amountInCents', {
             required: true,
             valueAsNumber: true,
             validate: {
@@ -89,11 +94,11 @@ export const AddNewLedgerRecord = ({
             },
           })}
           onChange={(event) =>
-            handleChange({ ...values, amount: event.target.value })
+            handleChange({ ...values, amountInCents: event.target.value })
           }
-          value={values.amount}
+          value={values.amountInCents}
         />
-        {errors?.amount?.type === 'required' && (
+        {errors?.amountInCents?.type === 'required' && (
           <span>Kwota nie może być pusta</span>
         )}
       </FormControl>
@@ -104,20 +109,20 @@ export const AddNewLedgerRecord = ({
             labelId="category-select-label"
             id="category-select"
             variant="outlined"
-            name="selectedCategory"
-            {...register('selectedCategory', { required: true })}
+            name="categoryId"
+            {...register('categoryId', { required: true })}
             onChange={(event) =>
-              handleChange({ ...values, selectedCategory: event.target.value })
+              handleChange({ ...values, categoryId: event.target.value })
             }
-            value={values.selectedCategory}
+            value={values.categoryId}
           >
             {data.map((option) => (
-              <MenuItem key={option.id} value={option.name}>
+              <MenuItem key={option.id} value={option.id}>
                 <CategoryCell name={option.name} color={option.color} />
               </MenuItem>
             ))}
           </Select>
-          {errors?.selectedCategory?.type === 'required' && (
+          {errors?.categoryId?.type === 'required' && (
             <span>Wybierz kategorię</span>
           )}
         </FormControl>
