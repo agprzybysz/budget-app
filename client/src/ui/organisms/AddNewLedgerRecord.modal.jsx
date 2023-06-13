@@ -33,18 +33,18 @@ export const AddNewLedgerRecord = ({
           amountInCents: yup
             .number('Kwota musi być numerem')
             .typeError('Kwota nie może być pusta')
-            .required('Kwota nie moze być pusta')
+            .required('Kwota nie może być pusta')
             .positive('Kwota musi być większa niż 0')
-            .lessThan(1000000, 'Kwota nie może być większa niż 1000000'),
+            .max(1000000, 'Kwota nie może być większa niż 1000000'),
           title: yup.string().trim().required('Nazwa nie może być pusta'),
         })
       : yup.object().shape({
           amountInCents: yup
             .number('Kwota musi być numerem')
             .typeError('Kwota nie może być pusta')
-            .required('Kwota nie moze być pusta')
+            .required('Kwota nie może być pusta')
             .positive('Kwota musi być większa niż 0')
-            .lessThan(1000000, 'Kwota nie może być większa niż 1000000'),
+            .max(1000000, 'Kwota nie może być większa niż 1000000'),
           title: yup.string().trim().required('Nazwa nie może być pusta'),
           categoryId: yup.string().required('Wybierz kategorię'),
         });
@@ -71,8 +71,14 @@ export const AddNewLedgerRecord = ({
   });
 
   const addData = (dataSubmitted) => {
-    console.log(dataSubmitted);
-    addNewLedgerData({ ...dataSubmitted });
+    console.log({
+      ...dataSubmitted,
+      amountInCents: dataSubmitted.amountInCents * 100,
+    });
+    addNewLedgerData({
+      ...dataSubmitted,
+      amountInCents: dataSubmitted.amountInCents * 100,
+    });
   };
 
   useEffect(() => {
@@ -130,6 +136,7 @@ export const AddNewLedgerRecord = ({
               select
               variant="outlined"
               label="Kategoria"
+              placeholder="Kwota"
               error={errors.categoryId ? true : false}
               helperText={errors.categoryId?.message}
               onChange={onChange}

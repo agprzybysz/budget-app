@@ -21,9 +21,9 @@ export const AddNewBudgetRecord = ({
     amountInCents: yup
       .number('Kwota musi być numerem')
       .typeError('Kwota nie może być pusta')
-      .required('Kwota nie moze być pusta')
+      .required('Kwota nie może być pusta')
       .positive('Kwota musi być większa niż 0')
-      .lessThan(1000000, 'Kwota nie może być większa niż 1000000'),
+      .max(1000000, 'Kwota nie może być większa niż 1000000'),
     categoryId: yup.string().required('Wybierz kategorię'),
   });
   const {
@@ -38,7 +38,10 @@ export const AddNewBudgetRecord = ({
   });
 
   const addData = (dataSubmitted) => {
-    addNewBudgetData(dataSubmitted);
+    addNewBudgetData({
+      ...dataSubmitted,
+      amountInCents: dataSubmitted.amountInCents * 100,
+    });
   };
 
   const getBudgetCategory = async () => {
@@ -61,10 +64,7 @@ export const AddNewBudgetRecord = ({
       <Controller
         name={'amountInCents'}
         control={control}
-        render={({
-          field: { onChange, value },
-          formState,
-        }) => (
+        render={({ field: { onChange, value }, formState }) => (
           <TextField
             type="number"
             variant="outlined"
@@ -84,10 +84,7 @@ export const AddNewBudgetRecord = ({
       <Controller
         name={'categoryId'}
         control={control}
-        render={({
-          field: { onChange, value },
-          formState,
-        }) => (
+        render={({ field: { onChange, value }, formState }) => (
           <TextField
             select
             variant="outlined"
