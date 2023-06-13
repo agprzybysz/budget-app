@@ -104,7 +104,7 @@ export const BudgetPage = () => {
   };
 
   //add records
-  const addRescordsMutation = useMutation({
+  const addRecordsMutation = useMutation({
     mutationFn: (requestBody) => {
       return BudgetService.create(requestBody);
     },
@@ -115,11 +115,7 @@ export const BudgetPage = () => {
   });
 
   const addRecords = (data) => {
-    /*const record = {
-      amountInCents: data.amount,
-      categoryId: data.selectedCategory,
-    };*/
-    addRescordsMutation.mutate({ requestBody: data });
+    addRecordsMutation.mutate({ requestBody: data });
   };
 
   useMutation((id) => {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, CategoryCell } from 'ui';
 import { CategoryService } from 'api';
-import { FormControl, TextField, MenuItem } from '@mui/material';
+import { TextField, MenuItem } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
@@ -17,11 +17,7 @@ export const AddNewBudgetRecord = ({
   handleClose,
   addNewBudgetData,
 }) => {
-  const [values, setValues] = useState(defaultValues);
-
-  const handleChange = (value) => {
-    setValues(value);
-  };
+  const [isDisabled, setDisabled] = useState(true);
 
   const validationSchema = yup.object().shape({
     amountInCents: yup
@@ -33,14 +29,19 @@ export const AddNewBudgetRecord = ({
     categoryId: yup.string().required('Wybierz kategorię'),
   });
   const {
-    register,
     handleSubmit,
-    formState: { errors },
+    control,
+    reset,
+
+    formState: { errors, isValid },
   } = useForm({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
     resolver: yupResolver(validationSchema),
+    defaultValues: defaultValues,
   });
+
+  console.log(isValid);
+
+  console.log(defaultValues);
 
   const addData = (dataSubmitted) => {
     addNewBudgetData(dataSubmitted);
@@ -56,46 +57,60 @@ export const AddNewBudgetRecord = ({
   });
 
   useEffect(() => {
-    if (isOpen) setValues(defaultValues);
+    if (isOpen) reset();
   }, [isOpen]);
 
   const getContent = (data) => (
     <form noValidate autoComplete="off">
-      <FormControl fullWidth sx={{ mb: 4 }}>
-        <TextField
-          type="number"
-          variant="outlined"
-          placeholder="Kwota"
-          name="amountInCents"
-          {...register('amountInCents')}
-          error={errors.amountInCents ? true : false}
-          helperText={errors.amountInCents?.message}
-          onChange={(event) =>
-            handleChange({ ...values, amountInCents: event.target.value })
-          }
-          value={values.amountInCents}
-        />
-      </FormControl>
-      <FormControl fullWidth sx={{ mb: 4 }}>
-        <TextField
-          select
-          variant="outlined"
-          name="categoryId"
-          {...register('categoryId')}
-          error={errors.categoryId ? true : false}
-          helperText={errors.categoryId?.message}
-          onChange={(event) =>
-            handleChange({ ...values, categoryId: event.target.value })
-          }
-          value={values.categoryId}
-        >
-          {data.map((option) => (
-            <MenuItem key={option.id} value={option.id}>
-              <CategoryCell name={option.name} color={option.color} />
-            </MenuItem>
-          ))}
-        </TextField>
-      </FormControl>
+      <Controller
+        name={'amountInCents'}
+        control={control}
+        render={({
+          field: { onChange, value },
+          fieldState: { error },
+          formState,
+        }) => (
+          <TextField
+            type="number"
+            variant="outlined"
+            placeholder="Kwota"
+            label="Kwota"
+            error={errors.amountInCents ? true : false}
+            helperText={errors.amountInCents?.message}
+            onChange={onChange}
+            value={value}
+            fullWidth
+            sx={{ mb: 4 }}
+          />
+        )}
+      />
+      <Controller
+        name={'categoryId'}
+        control={control}
+        render={({
+          field: { onChange, value },
+          fieldState: { error },
+          formState,
+        }) => (
+          <TextField
+            select
+            variant="outlined"
+            label="Kategoria"
+            error={errors.categoryId ? true : false}
+            helperText={errors.categoryId?.message}
+            onChange={onChange}
+            value={value}
+            fullWidth
+            sx={{ mb: 4 }}
+          >
+            {data.map((option) => (
+              <MenuItem key={option.id} value={option.id}>
+                <CategoryCell name={option.name} color={option.color} />
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
+      />
     </form>
   );
 
@@ -106,6 +121,7 @@ export const AddNewBudgetRecord = ({
       description="Zdefiniuj budżet"
       children={getContent(data || [])}
       onSubmit={handleSubmit(addData)}
+      disabled={setDisabled}
     />
   );
 };
