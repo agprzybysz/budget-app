@@ -62,13 +62,13 @@ export const AddNewLedgerRecord = ({
     handleSubmit,
     control,
     reset,
-    formState: { errors },
+
+    formState: { errors, isValid },
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: defaultValues,
+    mode: 'onChange',
   });
-
-  console.log(defaultValues);
 
   const addData = (dataSubmitted) => {
     console.log(dataSubmitted);
@@ -102,11 +102,7 @@ export const AddNewLedgerRecord = ({
       <Controller
         name={'amountInCents'}
         control={control}
-        render={({
-          field: { onChange, value },
-          fieldState: { error },
-          formState,
-        }) => (
+        render={({ field: { onChange, value }, formState }) => (
           <TextField
             type="number"
             variant="outlined"
@@ -165,6 +161,7 @@ export const AddNewLedgerRecord = ({
       }
       children={getContent(data, type)}
       onSubmit={handleSubmit(addData)}
+      disabled={isValid ? false : true}
     />
   );
 };

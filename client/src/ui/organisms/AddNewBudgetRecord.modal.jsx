@@ -17,8 +17,6 @@ export const AddNewBudgetRecord = ({
   handleClose,
   addNewBudgetData,
 }) => {
-  const [isDisabled, setDisabled] = useState(true);
-
   const validationSchema = yup.object().shape({
     amountInCents: yup
       .number('Kwota musi być numerem')
@@ -32,16 +30,12 @@ export const AddNewBudgetRecord = ({
     handleSubmit,
     control,
     reset,
-
     formState: { errors, isValid },
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: defaultValues,
+    mode: 'onChange',
   });
-
-  console.log(isValid);
-
-  console.log(defaultValues);
 
   const addData = (dataSubmitted) => {
     addNewBudgetData(dataSubmitted);
@@ -57,7 +51,9 @@ export const AddNewBudgetRecord = ({
   });
 
   useEffect(() => {
-    if (isOpen) reset();
+    if (isOpen) {
+      reset();
+    }
   }, [isOpen]);
 
   const getContent = (data) => (
@@ -67,7 +63,6 @@ export const AddNewBudgetRecord = ({
         control={control}
         render={({
           field: { onChange, value },
-          fieldState: { error },
           formState,
         }) => (
           <TextField
@@ -77,7 +72,9 @@ export const AddNewBudgetRecord = ({
             label="Kwota"
             error={errors.amountInCents ? true : false}
             helperText={errors.amountInCents?.message}
-            onChange={onChange}
+            onChange={({ target: { value } }) => {
+              onChange(value);
+            }}
             value={value}
             fullWidth
             sx={{ mb: 4 }}
@@ -89,7 +86,6 @@ export const AddNewBudgetRecord = ({
         control={control}
         render={({
           field: { onChange, value },
-          fieldState: { error },
           formState,
         }) => (
           <TextField
@@ -98,7 +94,9 @@ export const AddNewBudgetRecord = ({
             label="Kategoria"
             error={errors.categoryId ? true : false}
             helperText={errors.categoryId?.message}
-            onChange={onChange}
+            onChange={({ target: { value } }) => {
+              onChange(value);
+            }}
             value={value}
             fullWidth
             sx={{ mb: 4 }}
@@ -121,7 +119,7 @@ export const AddNewBudgetRecord = ({
       description="Zdefiniuj budżet"
       children={getContent(data || [])}
       onSubmit={handleSubmit(addData)}
-      disabled={setDisabled}
+      disabled={isValid ? false : true}
     />
   );
 };
