@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, CategoryCell } from 'ui';
 import { CategoryService } from 'api';
-import {
-  FormControl,
-  TextField,
-  Select,
-  MenuItem,
-  InputLabel,
-} from '@mui/material';
+import { FormControl, TextField, MenuItem } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -31,12 +25,12 @@ export const AddNewBudgetRecord = ({
 
   const validationSchema = yup.object().shape({
     amountInCents: yup
-      .number()
+      .number('Kwota musi być numerem')
       .typeError('Kwota nie może być pusta')
       .required('Kwota nie moze być pusta')
-      .min(0, 'Kwota musi być większa niż 0')
-      .max(1000000, 'Kwota nie może być większa niż '),
-    //categoryId: yup.string().required('Wybierz kategorię'),
+      .positive('Kwota musi być większa niż 0')
+      .lessThan(1000000, 'Kwota nie może być większa niż 1000000'),
+    categoryId: yup.string().required('Wybierz kategorię'),
   });
   const {
     register,
@@ -83,15 +77,13 @@ export const AddNewBudgetRecord = ({
         />
       </FormControl>
       <FormControl fullWidth sx={{ mb: 4 }}>
-        <InputLabel id="category-select-label">Wybierz kategorie</InputLabel>
-        <Select
-          labelId="category-select-label"
-          id="category-select"
+        <TextField
+          select
           variant="outlined"
           name="categoryId"
           {...register('categoryId')}
-          //serror={errors.categoryId ? true : false}
-          //helperText={errors.categoryId?.message}
+          error={errors.categoryId ? true : false}
+          helperText={errors.categoryId?.message}
           onChange={(event) =>
             handleChange({ ...values, categoryId: event.target.value })
           }
@@ -102,7 +94,7 @@ export const AddNewBudgetRecord = ({
               <CategoryCell name={option.name} color={option.color} />
             </MenuItem>
           ))}
-        </Select>
+        </TextField>
       </FormControl>
     </form>
   );
