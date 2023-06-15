@@ -11,12 +11,12 @@ import {
   Money,
   LocalizedDate,
   CategoryCell,
+  AddNewBudgetRecord,
 } from 'ui';
 import { Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BudgetService } from '../api';
-import { AddNewBudgetRecord } from '../ui/organisms/AddNewBudgetRecord.modal';
 
 export const BudgetPage = () => {
   const getBudgetData = async () => {
@@ -69,7 +69,9 @@ export const BudgetPage = () => {
     rows = data.map((item) => {
       let properties = {
         id: item.id,
-        category: <CategoryCell name={item.category.name} color="#37C4D7" />,
+        category: (
+          <CategoryCell name={item.category.name} color={item.category.color} />
+        ),
         amountInCents: <Money inCents={item.amountInCents} />,
         currentSpending: <Money inCents={item.currentSpending} />,
         budgetStatus:
@@ -93,17 +95,41 @@ export const BudgetPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budgetData'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetCategory'] });
     },
   });
 
-  const deleteRecords = (selectedRecords) =>
+  const deleteRecords = (selectedRecords) => {
     deleteRecordsMutation.mutate({ ids: selectedRecords });
+  };
+
+  //add records
+  const addRecordsMutation = useMutation({
+    mutationFn: (requestBody) => {
+      return BudgetService.create(requestBody);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgetData'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetCategory'] });
+    },
+  });
+
+  const addRecords = (data) => {
+    addRecordsMutation.mutate({ requestBody: data });
+  };
 
   useMutation((id) => {
     return BudgetService.remove(id);
   });
 
   const [showModal, setShowModal] = useState(false);
+
+  const handleCloseModal = () => setShowModal(false);
+
+  const addNewBudgetData = (data) => {
+    addRecords(data);
+    setShowModal(false);
+  };
 
   return (
     <Page title="Budżet">
@@ -133,7 +159,8 @@ export const BudgetPage = () => {
       >
         <AddNewBudgetRecord
           isOpen={showModal}
-          handleClose={() => setShowModal(false)}
+          handleClose={handleCloseModal}
+          addNewBudgetData={addNewBudgetData}
         />
         <Grid container>
           <Grid item xs={12} container justifyContent="center">

@@ -11,13 +11,13 @@ import {
   CategoryCell,
   Money,
   LocalizedDate,
+  AddNewLedgerRecord,
 } from 'ui';
 import { Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LedgerService } from 'api';
-import { AddNewLedgerRecord } from './AddNewLedgerRecord.modal';
 
 export const LedgerWidget = () => {
   const getLedgerData = async () => {
@@ -86,7 +86,6 @@ export const LedgerWidget = () => {
         })
       : [];
 
-  console.log(rows);
   const getUniqueId = (arr) => arr.id;
 
   const queryClient = useQueryClient();
@@ -102,8 +101,37 @@ export const LedgerWidget = () => {
   const deleteRecords = (selectedRecords) =>
     deleteRecordsMutation.mutate({ ids: selectedRecords });
 
+  //add new record
+  const addRescordsMutation = useMutation({
+    mutationFn: (requestBody) => {
+      return LedgerService.create(requestBody);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ledgerData'] });
+    },
+  });
+
+  const addRecords = (data) => {
+    console.log(data);
+    addRescordsMutation.mutate({ requestBody: data });
+  };
+
   const [showModal, setShowModal] = useState(false);
   const [type, setTypeModal] = useState('');
+
+  const handleCloseModal = () => setShowModal(false);
+
+  const setOpenModal = (typeModal) => {
+    setShowModal(true);
+    setTypeModal(typeModal);
+  };
+
+  const addNewLedgerData = (data) => {
+    addRecords(data);
+    setShowModal(false);
+  };
+
+  console.log('addLeger');
 
   return (
     <>
@@ -120,10 +148,7 @@ export const LedgerWidget = () => {
                   size={'large'}
                   startIcon={<AddIcon />}
                   className="button-iconleft"
-                  onClick={() => {
-                    setShowModal(true);
-                    setTypeModal('INCOME');
-                  }}
+                  onClick={() => setOpenModal('INCOME')}
                 >
                   Wpłać
                 </Button>
@@ -133,18 +158,16 @@ export const LedgerWidget = () => {
                   size={'large'}
                   startIcon={<RemoveIcon />}
                   className="button-iconleft"
-                  onClick={() => {
-                    setShowModal(true);
-                    setTypeModal('EXPENSE');
-                  }}
+                  onClick={() => setOpenModal('EXPENSE')}
                 >
                   Wypłać
                 </Button>
 
                 <AddNewLedgerRecord
                   isOpen={showModal}
-                  handleClose={() => setShowModal(false)}
+                  handleClose={handleCloseModal}
                   type={type}
+                  addNewLedgerData={addNewLedgerData}
                 />
               </div>
             )}

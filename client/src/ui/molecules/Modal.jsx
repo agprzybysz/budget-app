@@ -12,7 +12,6 @@ const styleModal = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: '450px',
-  height: '197px',
   backgroundColor: '#FFFFFF',
   boxShadow: '0px 2px 10px rgba(17, 25, 69, 0.1)',
   borderRadius: '18px',
@@ -28,9 +27,8 @@ export function AppModal({
   disabled,
   isOpen,
   handleClose,
+  onSubmit,
 }) {
-  const onClose = handleClose;
-  const onSubmit = () => console.log('submit');
   return (
     <div>
       <Modal
@@ -44,7 +42,7 @@ export function AppModal({
             id="modal-modal-title"
             title={description}
             component="h4"
-            sx={{ margin: 0, fontWeight: 'bold' }}
+            sx={{ margin: '0 0 45px 0', fontWeight: 'bold' }}
           />
           <CardContent id="modal-modal-description">{children}</CardContent>
           <CardActions sx={{ padding: 0, justifyContent: 'flex-end' }}>
@@ -52,7 +50,7 @@ export function AppModal({
               variant={'outlined'}
               color={'primary'}
               size={'large'}
-              onClick={onClose}
+              onClick={handleClose}
             >
               Anuluj
             </Button>
