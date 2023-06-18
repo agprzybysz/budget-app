@@ -25,7 +25,7 @@ export const LedgerWidget = () => {
   };
 
   const { isLoading, isError, isSuccess, data } = useQuery({
-    queryKey: ['ledgerData'],
+    queryKey: ['ledgerDataQuery'],
     queryFn: () => getLedgerData(),
   });
 
@@ -94,7 +94,10 @@ export const LedgerWidget = () => {
       return LedgerService.remove(ids);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ledgerData'] });
+      queryClient.invalidateQueries({ queryKey: ['ledgerDataQuery'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
+      queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
     },
   });
 
@@ -102,17 +105,20 @@ export const LedgerWidget = () => {
     deleteRecordsMutation.mutate({ ids: selectedRecords });
 
   //add new record
-  const addRescordsMutation = useMutation({
+  const addRecordsMutation = useMutation({
     mutationFn: (requestBody) => {
       return LedgerService.create(requestBody);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ledgerData'] });
+      queryClient.invalidateQueries({ queryKey: ['ledgerDataQuery'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
+      queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
     },
   });
 
   const addRecords = (data) => {
-    addRescordsMutation.mutate({ requestBody: data });
+    addRecordsMutation.mutate({ requestBody: data });
   };
 
   const [showModal, setShowModal] = useState(false);
@@ -129,8 +135,6 @@ export const LedgerWidget = () => {
     addRecords(data);
     setShowModal(false);
   };
-
-  console.log('addLeger');
 
   return (
     <>

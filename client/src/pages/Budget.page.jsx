@@ -23,7 +23,7 @@ export const BudgetPage = () => {
     return await BudgetService.findAll();
   };
   const { isLoading, isError, isSuccess, data } = useQuery({
-    queryKey: ['budgetData'],
+    queryKey: ['budgetDataQuery'],
     queryFn: () => getBudgetData(),
   });
 
@@ -94,8 +94,9 @@ export const BudgetPage = () => {
       return BudgetService.remove(ids);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgetData'] });
-      queryClient.invalidateQueries({ queryKey: ['budgetCategory'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetCategoryQuery'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
     },
   });
 
@@ -109,8 +110,9 @@ export const BudgetPage = () => {
       return BudgetService.create(requestBody);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['budgetData'] });
-      queryClient.invalidateQueries({ queryKey: ['budgetCategory'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetCategoryQuery'] });
+      queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
     },
   });
 

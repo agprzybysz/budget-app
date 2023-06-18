@@ -41,13 +41,13 @@ export const AddNewLedgerRecord = ({
           categoryId: yup.string().required('Wybierz kategorię'),
         });
 
-  const getExpenseCategory = async () => {
+  const getExpenseCategoryQuery = async () => {
     return await CategoryService.findAll();
   };
 
   const { data } = useQuery({
-    queryKey: ['expenseCategory'],
-    queryFn: () => getExpenseCategory(),
+    queryKey: ['expenseCategoryQuery'],
+    queryFn: () => getExpenseCategoryQuery(),
   });
 
   const {

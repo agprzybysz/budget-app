@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Modal, CategoryCell } from 'ui';
 import { CategoryService } from 'api';
 import { TextField, MenuItem } from '@mui/material';
@@ -49,7 +49,7 @@ export const AddNewBudgetRecord = ({
   };
 
   const { data } = useQuery({
-    queryKey: ['budgetCategory'],
+    queryKey: ['budgetCategoryQuery'],
     queryFn: () => getBudgetCategory(),
   });
 
