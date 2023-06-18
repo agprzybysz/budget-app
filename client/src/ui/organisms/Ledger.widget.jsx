@@ -112,7 +112,6 @@ export const LedgerWidget = () => {
   });
 
   const addRecords = (data) => {
-    console.log(data);
     addRescordsMutation.mutate({ requestBody: data });
   };
 

@@ -13,19 +13,11 @@ export const AddNewLedgerRecord = ({
   handleClose,
   addNewLedgerData,
 }) => {
-  const defaultValues =
-    type === 'INCOME'
-      ? {
-          mode: 'INCOME',
-          amountInCents: '',
-          title: '',
-        }
-      : {
-          mode: 'EXPENSE',
-          amountInCents: '',
-          title: '',
-          categoryId: '',
-        };
+  const defaultValues = {
+    amountInCents: '',
+    title: '',
+    categoryId: '',
+  };
 
   const validationSchema =
     type === 'INCOME'
@@ -71,13 +63,11 @@ export const AddNewLedgerRecord = ({
   });
 
   const addData = (dataSubmitted) => {
-    console.log({
-      ...dataSubmitted,
-      amountInCents: dataSubmitted.amountInCents * 100,
-    });
     addNewLedgerData({
-      ...dataSubmitted,
+      title: dataSubmitted.title,
       amountInCents: dataSubmitted.amountInCents * 100,
+      mode: type,
+      categoryId: dataSubmitted.categoryId,
     });
   };
 
