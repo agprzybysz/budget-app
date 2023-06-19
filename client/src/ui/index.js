@@ -9,6 +9,7 @@ export { Loader } from './atoms/Loader';
 export { Error } from './atoms/Error';
 export { NoContent } from './atoms/NoContent';
 export { Card } from './atoms/Card';
+export { NoResult } from './atoms/NoResult';
 
 // molecules
 export { CategoryCell } from './molecules/CategoryCell';
