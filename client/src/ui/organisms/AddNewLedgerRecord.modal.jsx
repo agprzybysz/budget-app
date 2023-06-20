@@ -76,7 +76,7 @@ export const AddNewLedgerRecord = ({
   }, [isOpen]);
 
   const getContent = (data, type) => (
-    <Box component="orm" noValidate autoComplete="off">
+    <Box component="form" noValidate autoComplete="off">
       <Controller
         name={'title'}
         control={control}

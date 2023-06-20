@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import {
   ActionHeader,
@@ -18,6 +18,18 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LedgerService } from 'api';
+import { useSnackbar } from 'notistack';
+
+const snackbarStyles = {
+  success: {
+    color: '#66BB6A',
+    borderRadius: '4px',
+  },
+  error: {
+    color: '#FF5D5D',
+    borderRadius: '4px',
+  },
+};
 
 export const LedgerWidget = () => {
   const getLedgerData = async () => {
@@ -28,6 +40,11 @@ export const LedgerWidget = () => {
     queryKey: ['ledgerDataQuery'],
     queryFn: () => getLedgerData(),
   });
+
+  const { enqueueSnackbar } = useSnackbar();
+  const handleShowSnackbar = (text, variant) => {
+    enqueueSnackbar(text, { variant });
+  };
 
   const columns = [
     {
@@ -98,13 +115,17 @@ export const LedgerWidget = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
+      handleShowSnackbar('Element został usunięty', 'success');
+    },
+    onError: () => {
+      handleShowSnackbar('Wystąpił nieoczekiwany błąd', 'error');
     },
   });
 
-  const deleteRecords = (selectedRecords) =>
+  const deleteRecords = (selectedRecords) => {
     deleteRecordsMutation.mutate({ ids: selectedRecords });
+  };
 
-  //add new record
   const addRecordsMutation = useMutation({
     mutationFn: (requestBody) => {
       return LedgerService.create(requestBody);
@@ -115,10 +136,18 @@ export const LedgerWidget = () => {
       queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
     },
+    onError: () => {
+      handleShowSnackbar('Wystąpił nieoczekiwany błąd', 'error');
+    },
   });
 
   const addRecords = (data) => {
     addRecordsMutation.mutate({ requestBody: data });
+    if (data.mode === 'INCOME') {
+      handleShowSnackbar('Wpływ został dodany', 'success');
+    } else {
+      handleShowSnackbar('Wydatek został zapisany', 'success');
+    }
   };
 
   const [showModal, setShowModal] = useState(false);
