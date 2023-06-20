@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Modal, CategoryCell } from 'ui';
 import { CategoryService } from 'api';
-import { TextField, MenuItem } from '@mui/material';
+import { TextField, MenuItem, Box } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -76,7 +76,7 @@ export const AddNewLedgerRecord = ({
   }, [isOpen]);
 
   const getContent = (data, type) => (
-    <form noValidate autoComplete="off">
+    <Box component="orm" noValidate autoComplete="off">
       <Controller
         name={'title'}
         control={control}
@@ -86,7 +86,7 @@ export const AddNewLedgerRecord = ({
             variant="outlined"
             placeholder="Nazwa"
             label="Nazwa"
-            error={errors.title ? true : false}
+            error={!!errors.title}
             helperText={errors.title?.message}
             onChange={onChange}
             value={value}
@@ -104,7 +104,7 @@ export const AddNewLedgerRecord = ({
             variant="outlined"
             placeholder="Kwota"
             label="Kwota"
-            error={errors.amountInCents ? true : false}
+            error={!!errors.amountInCents}
             helperText={errors.amountInCents?.message}
             onChange={onChange}
             value={value}
@@ -127,7 +127,7 @@ export const AddNewLedgerRecord = ({
               variant="outlined"
               label="Kategoria"
               placeholder="Kwota"
-              error={errors.categoryId ? true : false}
+              error={!!errors.categoryId}
               helperText={errors.categoryId?.message}
               onChange={onChange}
               value={value}
@@ -143,7 +143,7 @@ export const AddNewLedgerRecord = ({
           )}
         />
       )}
-    </form>
+    </Box>
   );
   return (
     <Modal
@@ -158,7 +158,7 @@ export const AddNewLedgerRecord = ({
       }
       children={getContent(data, type)}
       onSubmit={handleSubmit(addData)}
-      disabled={isValid ? false : true}
+      disabled={!isValid}
     />
   );
 };
