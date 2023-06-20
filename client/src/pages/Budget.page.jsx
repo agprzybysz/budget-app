@@ -17,6 +17,7 @@ import { Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BudgetService } from '../api';
+import { useSnackbar } from 'notistack';
 
 export const BudgetPage = () => {
   const getBudgetData = async () => {
@@ -26,6 +27,12 @@ export const BudgetPage = () => {
     queryKey: ['budgetDataQuery'],
     queryFn: () => getBudgetData(),
   });
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleShowSnackbar = (text, variant) => {
+    enqueueSnackbar(text, { variant });
+  };
 
   const columns = [
     {
@@ -97,6 +104,10 @@ export const BudgetPage = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetCategoryQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
+      handleShowSnackbar('Element został usunięty', 'success');
+    },
+    onError: () => {
+      handleShowSnackbar('Wystąpił nieoczekiwany błąd', 'error');
     },
   });
 
@@ -104,7 +115,6 @@ export const BudgetPage = () => {
     deleteRecordsMutation.mutate({ ids: selectedRecords });
   };
 
-  //add records
   const addRecordsMutation = useMutation({
     mutationFn: (requestBody) => {
       return BudgetService.create(requestBody);
@@ -113,6 +123,10 @@ export const BudgetPage = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetCategoryQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
+      handleShowSnackbar('Budżet został zdefiniowany', 'success');
+    },
+    onError: () => {
+      handleShowSnackbar('Wystąpił nieoczekiwany błąd', 'error');
     },
   });
 
