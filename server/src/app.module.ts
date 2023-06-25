@@ -5,6 +5,7 @@ import { BudgetController } from './controllers/budget.controller';
 import { SummaryController } from './controllers/summary.controller';
 import { LedgerController } from './controllers/ledger.controller';
 import { TestsController } from './controllers/tests.controller';
+import { LedgerService } from './services/ledger.service';
 
 @Module({
   imports: [
@@ -19,5 +20,6 @@ import { TestsController } from './controllers/tests.controller';
     LedgerController,
     TestsController,
   ],
+  providers: [LedgerService],
 })
 export class AppModule {}
