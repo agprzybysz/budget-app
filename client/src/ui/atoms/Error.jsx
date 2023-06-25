@@ -12,7 +12,6 @@ export const Error = ({ error }) => {
       }}
     >
       <Box
-        s
         sx={{
           margin: '0 auto',
           display: 'flex',

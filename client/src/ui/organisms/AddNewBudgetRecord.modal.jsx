@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Modal, CategoryCell } from 'ui';
 import { CategoryService } from 'api';
-import { TextField, MenuItem } from '@mui/material';
+import { TextField, MenuItem, Box } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -49,7 +49,7 @@ export const AddNewBudgetRecord = ({
   };
 
   const { data } = useQuery({
-    queryKey: ['budgetCategory'],
+    queryKey: ['budgetCategoryQuery'],
     queryFn: () => getBudgetCategory(),
   });
 
@@ -60,7 +60,7 @@ export const AddNewBudgetRecord = ({
   }, [isOpen]);
 
   const getContent = (data) => (
-    <form noValidate autoComplete="off">
+    <Box component="form" noValidate autoComplete="off">
       <Controller
         name={'amountInCents'}
         control={control}
@@ -70,7 +70,7 @@ export const AddNewBudgetRecord = ({
             variant="outlined"
             placeholder="Kwota"
             label="Kwota"
-            error={errors.amountInCents ? true : false}
+            error={!!errors.amountInCents}
             helperText={errors.amountInCents?.message}
             onChange={({ target: { value } }) => {
               onChange(value);
@@ -89,7 +89,7 @@ export const AddNewBudgetRecord = ({
             select
             variant="outlined"
             label="Kategoria"
-            error={errors.categoryId ? true : false}
+            error={!!errors.categoryId}
             helperText={errors.categoryId?.message}
             onChange={({ target: { value } }) => {
               onChange(value);
@@ -106,7 +106,7 @@ export const AddNewBudgetRecord = ({
           </TextField>
         )}
       />
-    </form>
+    </Box>
   );
 
   return (
@@ -116,7 +116,7 @@ export const AddNewBudgetRecord = ({
       description="Zdefiniuj budżet"
       children={getContent(data || [])}
       onSubmit={handleSubmit(addData)}
-      disabled={isValid ? false : true}
+      disabled={!isValid}
     />
   );
 };
