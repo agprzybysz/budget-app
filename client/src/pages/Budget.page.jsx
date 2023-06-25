@@ -20,6 +20,14 @@ import { BudgetService } from '../api';
 import { useSnackbar } from 'notistack';
 
 export const BudgetPage = () => {
+  const notificationMessages = {
+    error: 'Wystąpił nieoczekiwany błąd',
+    success: {
+      addRecord: 'Budżet został zdefiniowany',
+      deleteRecord: 'Element został usunięty',
+    },
+  };
+
   const getBudgetData = async () => {
     return await BudgetService.findAll();
   };
@@ -104,10 +112,10 @@ export const BudgetPage = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetCategoryQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
-      handleShowSnackbar('Element został usunięty', 'success');
+      handleShowSnackbar(notificationMessages.success.deleteRecord, 'success');
     },
     onError: () => {
-      handleShowSnackbar('Wystąpił nieoczekiwany błąd', 'error');
+      handleShowSnackbar(notificationMessages.error, 'error');
     },
   });
 
@@ -123,10 +131,10 @@ export const BudgetPage = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetCategoryQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
-      handleShowSnackbar('Budżet został zdefiniowany', 'success');
+      handleShowSnackbar(notificationMessages.success.addRecord, 'success');
     },
     onError: () => {
-      handleShowSnackbar('Wystąpił nieoczekiwany błąd', 'error');
+      handleShowSnackbar(notificationMessages.error, 'error');
     },
   });
 

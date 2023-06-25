@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 
 import {
   ActionHeader,
@@ -20,18 +20,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LedgerService } from 'api';
 import { useSnackbar } from 'notistack';
 
-const snackbarStyles = {
-  success: {
-    color: '#66BB6A',
-    borderRadius: '4px',
-  },
-  error: {
-    color: '#FF5D5D',
-    borderRadius: '4px',
-  },
-};
-
 export const LedgerWidget = () => {
+  const notificationMessages = {
+    error: 'Wystąpił nieoczekiwany błąd',
+    success: {
+      deleteRecord: 'Element został usunięty',
+      addRecord: {
+        income: 'Wpływ został dodany',
+        expanse: 'Wydatek został zapisany',
+      },
+    },
+  };
+
   const getLedgerData = async () => {
     return await LedgerService.findAll();
   };
@@ -75,11 +75,11 @@ export const LedgerWidget = () => {
       label: 'Obecna kwota',
       renderCell(row) {
         return row.mode === 'EXPENSE' ? (
-          <div style={{ color: 'red' }}>
+          <div style={{ color: '#FF0000' }}>
             -<Money inCents={row.amountInCents} />
           </div>
         ) : row.mode === 'INCOME' ? (
-          <div style={{ color: 'green' }}>
+          <div style={{ color: '#00b300' }}>
             +<Money inCents={row.amountInCents} />
           </div>
         ) : (
@@ -115,10 +115,10 @@ export const LedgerWidget = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
-      handleShowSnackbar('Element został usunięty', 'success');
+      handleShowSnackbar(notificationMessages.success.deleteRecord, 'success');
     },
     onError: () => {
-      handleShowSnackbar('Wystąpił nieoczekiwany błąd', 'error');
+      handleShowSnackbar(notificationMessages.error, 'error');
     },
   });
 
@@ -130,24 +130,30 @@ export const LedgerWidget = () => {
     mutationFn: (requestBody) => {
       return LedgerService.create(requestBody);
     },
-    onSuccess: () => {
+    onSuccess: (requestBody) => {
       queryClient.invalidateQueries({ queryKey: ['ledgerDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
+      if (requestBody.mode === 'INCOME') {
+        handleShowSnackbar(
+          notificationMessages.success.addRecord.income,
+          'success',
+        );
+      } else {
+        handleShowSnackbar(
+          notificationMessages.success.addRecord.expanse,
+          'success',
+        );
+      }
     },
     onError: () => {
-      handleShowSnackbar('Wystąpił nieoczekiwany błąd', 'error');
+      handleShowSnackbar(notificationMessages.error, 'error');
     },
   });
 
   const addRecords = (data) => {
     addRecordsMutation.mutate({ requestBody: data });
-    if (data.mode === 'INCOME') {
-      handleShowSnackbar('Wpływ został dodany', 'success');
-    } else {
-      handleShowSnackbar('Wydatek został zapisany', 'success');
-    }
   };
 
   const [showModal, setShowModal] = useState(false);
