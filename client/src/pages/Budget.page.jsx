@@ -155,6 +155,20 @@ export const BudgetPage = () => {
     setShowModal(false);
   };
 
+  //pagination
+
+  const [page, setPage] = React.useState(0);
+  const [perPage, setPerPage] = React.useState(10);
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handlePerPageChange = (event) => {
+    setPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <Page title="Budżet">
       <Card
@@ -197,6 +211,10 @@ export const BudgetPage = () => {
                 headCells={columns}
                 getUniqueId={getUniqueId}
                 deleteRecords={deleteRecords}
+                page={page}
+                perPage={perPage}
+                onPageChange={handlePageChange}
+                onPerPageChange={handlePerPageChange}
               />
             )}
           </Grid>
