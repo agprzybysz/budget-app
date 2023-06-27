@@ -292,6 +292,7 @@ export const LedgerWidget = () => {
                 onPageChange={handlePageChange}
                 onPerPageChange={handlePerPageChange}
                 total={totalRecords}
+                paginationType="server"
               />
             )}
             {isSuccess && data.length > 0 && loading && <Loader />}

@@ -222,6 +222,7 @@ export const BudgetPage = () => {
                 onPageChange={handlePageChange}
                 onPerPageChange={handlePerPageChange}
                 total={data.length}
+                paginationType="frontend"
               />
             )}
           </Grid>

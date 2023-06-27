@@ -27,6 +27,7 @@ export const Table = ({
   onPageChange,
   onPerPageChange,
   total,
+  paginationType,
 }) => {
   const [selected, setSelected] = React.useState([]);
 
@@ -117,12 +118,10 @@ export const Table = ({
           />
           <TableBody>
             {
-              /*(perPage > 0
-              ? rows.slice(page * perPage, page * perPage + perPage)
-              : rows
-            ).map((row, index) => {*/
-
-              rows.slice().map((row, index) => {
+              (paginationType === 'frontend'
+                ? rows.slice(page * perPage, page * perPage + perPage)
+                : rows.slice()
+              ).map((row, index) => {
                 const uniqueId = getUniqueId(row);
                 const isItemSelected = selected.includes(uniqueId);
                 const labelId = `enhanced-table-checkbox-${index}`;
@@ -148,7 +147,6 @@ export const Table = ({
                     </TableCell>
                     {headCells.map((head) => {
                       const renderedRow = head.renderCell(row) || '';
-
                       return (
                         <TableCell key={head.id} align="left">
                           {renderedRow}
