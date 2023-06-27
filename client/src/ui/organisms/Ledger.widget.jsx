@@ -79,11 +79,9 @@ export const LedgerWidget = () => {
   //reload table on controllers change
   useEffect(() => {
     setLoading(true);
-    console.log(paginationController);
     queryClient.invalidateQueries({
       queryKey: ['ledgerDataQuery', paginationController],
     });
-    console.log('controllers change');
     setLoading(false);
   }, [paginationController]);
 
@@ -98,7 +96,6 @@ export const LedgerWidget = () => {
       ...prevState,
       page: prevState.page - 1,
     }));
-    console.log(paginationController);
   }
 
   const { enqueueSnackbar } = useSnackbar();
@@ -163,7 +160,6 @@ export const LedgerWidget = () => {
         })
       : [];
 
-  //console.log(data)
   const getUniqueId = (arr) => arr.id;
 
   const deleteRecordsMutation = useMutation({

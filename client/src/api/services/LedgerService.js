@@ -19,7 +19,6 @@ export class LedgerService {
    * @throws ApiError
    */
   static findAll({ offset, limit }) {
-    console.log(`/ledger?limit=${limit}&offset=${offset}`);
     return request({
       method: 'GET',
       path: `/ledger?limit=${limit}&offset=${offset}`,
