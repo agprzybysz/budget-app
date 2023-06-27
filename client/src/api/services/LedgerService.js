@@ -66,4 +66,14 @@ export class LedgerService {
           body: { ids },
         });
   }
+  /**
+   * @returns any
+   * @throws ApiError
+   */
+  static getAll() {
+    return request({
+      method: 'GET',
+      path: `/ledger`,
+    });
+  }
 }
