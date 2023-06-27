@@ -26,11 +26,8 @@ export const Table = ({
   perPage,
   onPageChange,
   onPerPageChange,
+  total
 }) => {
-  console.log(page);
-  console.log(perPage);
-  console.log(onPageChange);
-  console.log(onPerPageChange);
 
   const [selected, setSelected] = React.useState([]);
 
@@ -120,10 +117,12 @@ export const Table = ({
             headCells={headCells}
           />
           <TableBody>
-            {(perPage > 0
+            {/*(perPage > 0
               ? rows.slice(page * perPage, page * perPage + perPage)
               : rows
-            ).map((row, index) => {
+            ).map((row, index) => {*/
+
+              rows.slice().map((row, index) => {
               const uniqueId = getUniqueId(row);
               const isItemSelected = selected.includes(uniqueId);
               const labelId = `enhanced-table-checkbox-${index}`;
@@ -169,7 +168,7 @@ export const Table = ({
         onPageChange={onPageChange}
         onRowsPerPageChange={onPerPageChange}
         rowsPerPageOptions={[10, 20, 50]}
-        count={rows.length}
+        count={total}
         SelectProps={{
           inputProps: {
             'aria-label': 'rows per page',

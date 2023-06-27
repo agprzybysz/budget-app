@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   ActionHeader,
@@ -32,14 +32,62 @@ export const LedgerWidget = () => {
     },
   };
 
-  const getLedgerData = async () => {
-    return await LedgerService.findAll();
+  //pagination
+  const [paginationController, setPaginationController] = useState({
+    page: 0,
+    perPage: 10,
+  });
+  const [loading, setLoading] = React.useState(true);
+  const [totalRecords, setTotalRecords] = React.useState(0);
+
+  const fetchTotal = () => {
+    fetch('http://localhost:4320/ledger')
+      .then((response) => response.json())
+      .then((data) => {
+        setTotalRecords(data.length);
+      });
+  };
+  fetchTotal();
+  console.log(totalRecords);
+
+  const handlePageChange = (event, newPage) => {
+    setPaginationController({
+      ...paginationController,
+      page: newPage,
+    });
+  };
+
+  const handlePerPageChange = (event) => {
+    setPaginationController({
+      ...paginationController,
+      page: 0,
+      perPage: +event.target.value,
+    });
+  };
+
+  const getLedgerData = async (paginationController) => {
+    return await LedgerService.findAll({
+      offset: paginationController.perPage * paginationController.page,
+      limit: paginationController.perPage,
+    });
   };
 
   const { isLoading, isError, isSuccess, data } = useQuery({
-    queryKey: ['ledgerDataQuery'],
-    queryFn: () => getLedgerData(),
+    queryKey: ['ledgerDataQuery', paginationController],
+    queryFn: () => getLedgerData(paginationController),
   });
+
+  useEffect(() => {
+    console.log('useEffect');
+    setLoading(true);
+    queryClient.invalidateQueries({
+      queryKey: ['ledgerDataQuery', paginationController],
+    });
+    setLoading(false);
+  }, [paginationController]);
+/*
+  const total = getLedgerData();
+  console.log(total);*/
 
   const { enqueueSnackbar } = useSnackbar();
   const handleShowSnackbar = (text, variant) => {
@@ -111,7 +159,9 @@ export const LedgerWidget = () => {
       return LedgerService.remove(ids);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ledgerDataQuery'] });
+      queryClient.invalidateQueries({
+        queryKey: ['ledgerDataQuery', paginationController],
+      });
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
@@ -131,7 +181,9 @@ export const LedgerWidget = () => {
       return LedgerService.create(requestBody);
     },
     onSuccess: (requestBody) => {
-      queryClient.invalidateQueries({ queryKey: ['ledgerDataQuery'] });
+      queryClient.invalidateQueries({
+        queryKey: ['ledgerDataQuery', paginationController],
+      });
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
@@ -223,6 +275,11 @@ export const LedgerWidget = () => {
                 headCells={columns}
                 getUniqueId={getUniqueId}
                 deleteRecords={deleteRecords}
+                page={paginationController.page}
+                perPage={paginationController.perPage}
+                onPageChange={handlePageChange}
+                onPerPageChange={handlePerPageChange}
+                total={totalRecords}
               />
             )}
           </Grid>
