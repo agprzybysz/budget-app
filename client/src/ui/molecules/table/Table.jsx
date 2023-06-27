@@ -26,9 +26,8 @@ export const Table = ({
   perPage,
   onPageChange,
   onPerPageChange,
-  total
+  total,
 }) => {
-
   const [selected, setSelected] = React.useState([]);
 
   const handleSelectAllClick = (event) => {
@@ -117,47 +116,49 @@ export const Table = ({
             headCells={headCells}
           />
           <TableBody>
-            {/*(perPage > 0
+            {
+              /*(perPage > 0
               ? rows.slice(page * perPage, page * perPage + perPage)
               : rows
             ).map((row, index) => {*/
 
               rows.slice().map((row, index) => {
-              const uniqueId = getUniqueId(row);
-              const isItemSelected = selected.includes(uniqueId);
-              const labelId = `enhanced-table-checkbox-${index}`;
+                const uniqueId = getUniqueId(row);
+                const isItemSelected = selected.includes(uniqueId);
+                const labelId = `enhanced-table-checkbox-${index}`;
 
-              return (
-                <TableRow
-                  hover
-                  role="checkbox"
-                  key={uniqueId}
-                  onClick={(event) => handleClick(event, uniqueId)}
-                  aria-checked={isItemSelected}
-                  tabIndex={-1}
-                  selected={isItemSelected}
-                >
-                  <TableCell padding="checkbox">
-                    <Checkbox
-                      color="primary"
-                      checked={isItemSelected}
-                      inputProps={{
-                        'aria-labelledby': labelId,
-                      }}
-                    />
-                  </TableCell>
-                  {headCells.map((head) => {
-                    const renderedRow = head.renderCell(row) || '';
+                return (
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    key={uniqueId}
+                    onClick={(event) => handleClick(event, uniqueId)}
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    selected={isItemSelected}
+                  >
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        color="primary"
+                        checked={isItemSelected}
+                        inputProps={{
+                          'aria-labelledby': labelId,
+                        }}
+                      />
+                    </TableCell>
+                    {headCells.map((head) => {
+                      const renderedRow = head.renderCell(row) || '';
 
-                    return (
-                      <TableCell key={head.id} align="left">
-                        {renderedRow}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
+                      return (
+                        <TableCell key={head.id} align="left">
+                          {renderedRow}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })
+            }
           </TableBody>
         </MuiTable>
       </TableContainer>
