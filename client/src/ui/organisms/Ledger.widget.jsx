@@ -32,23 +32,13 @@ export const LedgerWidget = () => {
     },
   };
 
-  //pagination
+  //pagination controllers
   const [paginationController, setPaginationController] = useState({
     page: 0,
     perPage: 10,
   });
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState();
   const [totalRecords, setTotalRecords] = React.useState(0);
-
-  const fetchTotal = () => {
-    fetch('http://localhost:4320/ledger')
-      .then((response) => response.json())
-      .then((data) => {
-        setTotalRecords(data.length);
-      });
-  };
-  fetchTotal();
-  console.log(totalRecords);
 
   const handlePageChange = (event, newPage) => {
     setPaginationController({
@@ -65,10 +55,17 @@ export const LedgerWidget = () => {
     });
   };
 
-  const getLedgerData = async (paginationController) => {
+  const getTotalRecords = async () => {
+    let res = await LedgerService.getAll();
+    setTotalRecords(res.length);
+  };
+
+  const getLedgerData = async ({ page, perPage }) => {
+    getTotalRecords();
+
     return await LedgerService.findAll({
-      offset: paginationController.perPage * paginationController.page,
-      limit: paginationController.perPage,
+      offset: perPage * page,
+      limit: perPage,
     });
   };
 
@@ -77,17 +74,32 @@ export const LedgerWidget = () => {
     queryFn: () => getLedgerData(paginationController),
   });
 
+  const queryClient = useQueryClient();
+
+  //reload table on controllers change
   useEffect(() => {
-    console.log('useEffect');
     setLoading(true);
+    console.log(paginationController);
     queryClient.invalidateQueries({
       queryKey: ['ledgerDataQuery', paginationController],
     });
+    console.log('controllers change');
     setLoading(false);
   }, [paginationController]);
-/*
-  const total = getLedgerData();
-  console.log(total);*/
+
+  //move to previous page when deleted all records on last page
+  if (
+    data != null &&
+    isSuccess &&
+    data.length === 0 &&
+    paginationController.page > 0
+  ) {
+    setPaginationController((prevState) => ({
+      ...prevState,
+      page: prevState.page - 1,
+    }));
+    console.log(paginationController);
+  }
 
   const { enqueueSnackbar } = useSnackbar();
   const handleShowSnackbar = (text, variant) => {
@@ -151,9 +163,9 @@ export const LedgerWidget = () => {
         })
       : [];
 
+  //console.log(data)
   const getUniqueId = (arr) => arr.id;
 
-  const queryClient = useQueryClient();
   const deleteRecordsMutation = useMutation({
     mutationFn: (ids) => {
       return LedgerService.remove(ids);
@@ -269,7 +281,7 @@ export const LedgerWidget = () => {
             {isLoading && <Loader />}
             {isError && <Error />}
             {isSuccess && data.length === 0 && <NoContent />}
-            {isSuccess && data.length > 0 && (
+            {isSuccess && data.length > 0 && !loading && (
               <Table
                 rows={rows}
                 headCells={columns}
@@ -282,6 +294,7 @@ export const LedgerWidget = () => {
                 total={totalRecords}
               />
             )}
+            {isSuccess && data.length > 0 && loading && <Loader />}
           </Grid>
         </Grid>
       </Card>
