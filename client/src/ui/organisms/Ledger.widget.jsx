@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   ActionHeader,
@@ -20,26 +20,83 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LedgerService } from 'api';
 import { useSnackbar } from 'notistack';
 
-const snackbarStyles = {
-  success: {
-    color: '#66BB6A',
-    borderRadius: '4px',
-  },
-  error: {
-    color: '#FF5D5D',
-    borderRadius: '4px',
-  },
-};
-
 export const LedgerWidget = () => {
-  const getLedgerData = async () => {
-    return await LedgerService.findAll();
+  const notificationMessages = {
+    error: 'Wystąpił nieoczekiwany błąd',
+    success: {
+      deleteRecord: 'Element został usunięty',
+      addRecord: {
+        income: 'Wpływ został dodany',
+        expanse: 'Wydatek został zapisany',
+      },
+    },
+  };
+
+  //pagination controllers
+  const [paginationController, setPaginationController] = useState({
+    page: 0,
+    perPage: 10,
+  });
+  const [loading, setLoading] = React.useState();
+  const [totalRecords, setTotalRecords] = React.useState(0);
+
+  const handlePageChange = (event, newPage) => {
+    setPaginationController({
+      ...paginationController,
+      page: newPage,
+    });
+  };
+
+  const handlePerPageChange = (event) => {
+    setPaginationController({
+      ...paginationController,
+      page: 0,
+      perPage: +event.target.value,
+    });
+  };
+
+  const getTotalRecords = async () => {
+    let res = await LedgerService.getAll();
+    setTotalRecords(res.length);
+  };
+
+  const getLedgerData = async ({ page, perPage }) => {
+    getTotalRecords();
+
+    return await LedgerService.findAll({
+      offset: perPage * page,
+      limit: perPage,
+    });
   };
 
   const { isLoading, isError, isSuccess, data } = useQuery({
-    queryKey: ['ledgerDataQuery'],
-    queryFn: () => getLedgerData(),
+    queryKey: ['ledgerDataQuery', paginationController],
+    queryFn: () => getLedgerData(paginationController),
   });
+
+  const queryClient = useQueryClient();
+
+  //reload table on controllers change
+  useEffect(() => {
+    setLoading(true);
+    queryClient.invalidateQueries({
+      queryKey: ['ledgerDataQuery', paginationController],
+    });
+    setLoading(false);
+  }, [paginationController]);
+
+  //move to previous page when deleted all records on last page
+  if (
+    data != null &&
+    isSuccess &&
+    data.length === 0 &&
+    paginationController.page > 0
+  ) {
+    setPaginationController((prevState) => ({
+      ...prevState,
+      page: prevState.page - 1,
+    }));
+  }
 
   const { enqueueSnackbar } = useSnackbar();
   const handleShowSnackbar = (text, variant) => {
@@ -75,11 +132,11 @@ export const LedgerWidget = () => {
       label: 'Obecna kwota',
       renderCell(row) {
         return row.mode === 'EXPENSE' ? (
-          <div style={{ color: 'red' }}>
+          <div style={{ color: '#FF0000' }}>
             -<Money inCents={row.amountInCents} />
           </div>
         ) : row.mode === 'INCOME' ? (
-          <div style={{ color: 'green' }}>
+          <div style={{ color: '#00b300' }}>
             +<Money inCents={row.amountInCents} />
           </div>
         ) : (
@@ -105,20 +162,21 @@ export const LedgerWidget = () => {
 
   const getUniqueId = (arr) => arr.id;
 
-  const queryClient = useQueryClient();
   const deleteRecordsMutation = useMutation({
     mutationFn: (ids) => {
       return LedgerService.remove(ids);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ledgerDataQuery'] });
+      queryClient.invalidateQueries({
+        queryKey: ['ledgerDataQuery', paginationController],
+      });
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
-      handleShowSnackbar('Element został usunięty', 'success');
+      handleShowSnackbar(notificationMessages.success.deleteRecord, 'success');
     },
     onError: () => {
-      handleShowSnackbar('Wystąpił nieoczekiwany błąd', 'error');
+      handleShowSnackbar(notificationMessages.error, 'error');
     },
   });
 
@@ -130,24 +188,32 @@ export const LedgerWidget = () => {
     mutationFn: (requestBody) => {
       return LedgerService.create(requestBody);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['ledgerDataQuery'] });
+    onSuccess: (requestBody) => {
+      queryClient.invalidateQueries({
+        queryKey: ['ledgerDataQuery', paginationController],
+      });
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
+      if (requestBody.mode === 'INCOME') {
+        handleShowSnackbar(
+          notificationMessages.success.addRecord.income,
+          'success',
+        );
+      } else {
+        handleShowSnackbar(
+          notificationMessages.success.addRecord.expanse,
+          'success',
+        );
+      }
     },
     onError: () => {
-      handleShowSnackbar('Wystąpił nieoczekiwany błąd', 'error');
+      handleShowSnackbar(notificationMessages.error, 'error');
     },
   });
 
   const addRecords = (data) => {
     addRecordsMutation.mutate({ requestBody: data });
-    if (data.mode === 'INCOME') {
-      handleShowSnackbar('Wpływ został dodany', 'success');
-    } else {
-      handleShowSnackbar('Wydatek został zapisany', 'success');
-    }
   };
 
   const [showModal, setShowModal] = useState(false);
@@ -211,14 +277,21 @@ export const LedgerWidget = () => {
             {isLoading && <Loader />}
             {isError && <Error />}
             {isSuccess && data.length === 0 && <NoContent />}
-            {isSuccess && data.length > 0 && (
+            {isSuccess && data.length > 0 && !loading && (
               <Table
                 rows={rows}
                 headCells={columns}
                 getUniqueId={getUniqueId}
                 deleteRecords={deleteRecords}
+                page={paginationController.page}
+                perPage={paginationController.perPage}
+                onPageChange={handlePageChange}
+                onPerPageChange={handlePerPageChange}
+                total={totalRecords}
+                paginationType="server"
               />
             )}
+            {isSuccess && data.length > 0 && loading && <Loader />}
           </Grid>
         </Grid>
       </Card>
