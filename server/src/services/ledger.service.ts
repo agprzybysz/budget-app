@@ -32,8 +32,17 @@ export class LedgerService {
     return this.ledgerService.getAll();
   };
 
-  findAllWithLimitAndOffset = (limit: number, offset: number) => {
-    return this.ledgerService.getAll().slice(offset, offset + limit);
+  findAllWithLimitAndOffset = (params: { limit: number; offset: number }) => {
+    const { limit, offset } = params;
+    const all = this.ledgerService.getAll();
+    if (offset > all.length) {
+      return [];
+    }
+
+    const start = offset;
+    const end = offset + limit > all.length ? all.length : offset + limit;
+
+    return all.slice(start, end);
   };
 
   findById = (id: string): LedgerEntity => {

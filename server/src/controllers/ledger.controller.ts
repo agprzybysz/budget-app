@@ -74,7 +74,12 @@ export class LedgerController implements OnModuleInit {
     type: Number,
   })
   @Get()
-  findAll(@Query('limit') limit?: number, @Query('offset') offset?: number) {
+  findAll(
+    @Query('limit') queryLimit?: number,
+    @Query('offset') queryOffset?: number,
+  ) {
+    const limit = queryLimit ? Number(queryLimit) : undefined;
+    const offset = queryOffset ? Number(queryOffset) : undefined;
     if (limit !== undefined && offset === undefined) {
       throw new BadRequestException(
         'Offset is required when limit is provided',
@@ -90,7 +95,7 @@ export class LedgerController implements OnModuleInit {
     let records = [];
 
     if (limit !== undefined && offset !== undefined) {
-      records = this.ledgerService.findAllWithLimitAndOffset(limit, offset);
+      records = this.ledgerService.findAllWithLimitAndOffset({ limit, offset });
     } else {
       records = this.ledgerService.findAll();
     }
