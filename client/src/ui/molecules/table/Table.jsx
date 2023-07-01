@@ -162,7 +162,7 @@ export const Table = ({
       </TableContainer>
       <TablePagination
         component="div"
-        page={page}
+        page={!total || total <= 0 ? 0 : page}
         rowsPerPage={perPage}
         onPageChange={onPageChange}
         onRowsPerPageChange={onPerPageChange}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ActionHeader,
   Card,
@@ -18,6 +18,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BudgetService } from '../api';
 import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router-dom';
 
 export const BudgetPage = () => {
   const notificationMessages = {
@@ -27,6 +28,51 @@ export const BudgetPage = () => {
       deleteRecord: 'Element został usunięty',
     },
   };
+  //pagination
+  const [paginationController, setPaginationController] = useState({
+    page: 0,
+    perPage: 10,
+  });
+
+  const handlePageChange = (event, newPage) => {
+    setPaginationController({
+      ...paginationController,
+      page: newPage,
+    });
+  };
+
+  const handlePerPageChange = (event) => {
+    setPaginationController({
+      ...paginationController,
+      page: 0,
+      perPage: +event.target.value,
+    });
+  };
+
+  let history = useHistory();
+
+  useEffect(() => {
+    if (history.location.search) {
+      const urlParams = new URLSearchParams(history.location.search);
+      setPaginationController({
+        ...paginationController,
+        page: +urlParams.get('page'),
+        perPage: +urlParams.get('perPage'),
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const queryParams = {
+      perPage: paginationController.perPage,
+      page: paginationController.page,
+    };
+    const params = new URLSearchParams(queryParams).toString();
+    history.replace({
+      pathname: '/budget',
+      search: `?${params}`,
+    });
+  }, [paginationController]);
 
   const getBudgetData = async () => {
     return await BudgetService.findAll();
@@ -155,26 +201,6 @@ export const BudgetPage = () => {
     setShowModal(false);
   };
 
-  //pagination
-  const [paginationController, setPaginationController] = useState({
-    page: 0,
-    perPage: 10,
-  });
-
-  const handlePageChange = (event, newPage) => {
-    setPaginationController({
-      ...paginationController,
-      page: newPage,
-    });
-  };
-
-  const handlePerPageChange = (event) => {
-    setPaginationController({
-      ...paginationController,
-      page: 0,
-      perPage: +event.target.value,
-    });
-  };
   return (
     <Page title="Budżet">
       <Card

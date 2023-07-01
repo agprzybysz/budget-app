@@ -69,7 +69,7 @@ export class LedgerService {
    * @returns any
    * @throws ApiError
    */
-  static getAll() {
+  static findAllRecords() {
     return request({
       method: 'GET',
       path: `/ledger`,
