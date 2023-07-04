@@ -34,7 +34,9 @@ export class LedgerService {
 
   findAllWithLimitAndOffset = (params: { limit: number; offset: number }) => {
     const { limit, offset } = params;
-    const all = this.ledgerService.getAll();
+    const all = this.ledgerService
+      .getAll()
+      .sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
     if (offset > all.length) {
       return [];
     }
