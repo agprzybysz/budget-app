@@ -19,6 +19,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LedgerService } from 'api';
 import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router-dom';
 
 export const LedgerWidget = () => {
   const notificationMessages = {
@@ -56,22 +57,45 @@ export const LedgerWidget = () => {
   };
 
   const getTotalRecords = async () => {
-    let res = await LedgerService.getAll();
+    let res = await LedgerService.findAllRecords();
     setTotalRecords(res.length);
   };
 
   const getLedgerData = async ({ page, perPage }) => {
-    getTotalRecords();
-
     return await LedgerService.findAll({
       offset: perPage * page,
       limit: perPage,
     });
   };
 
+  let history = useHistory();
+
+  useEffect(() => {
+    if (history.location.search) {
+      const urlParams = new URLSearchParams(history.location.search);
+      setPaginationController({
+        ...paginationController,
+        page: +urlParams.get('page'),
+        perPage: +urlParams.get('perPage'),
+      });
+    }
+  }, []);
+
   const { isLoading, isError, isSuccess, data } = useQuery({
     queryKey: ['ledgerDataQuery', paginationController],
     queryFn: () => getLedgerData(paginationController),
+    onSuccess() {
+      getTotalRecords();
+      const queryParams = {
+        perPage: paginationController.perPage,
+        page: paginationController.page,
+      };
+      const params = new URLSearchParams(queryParams).toString();
+      history.replace({
+        pathname: '/ledger',
+        search: `?${params}`,
+      });
+    },
   });
 
   const queryClient = useQueryClient();
