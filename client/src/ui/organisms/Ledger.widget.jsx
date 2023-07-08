@@ -20,19 +20,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LedgerService } from 'api';
 import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
+import { NOTIFICATION_MESSAGES } from '../constants'
 
 export const LedgerWidget = () => {
-  const notificationMessages = {
-    error: 'Wystąpił nieoczekiwany błąd',
-    success: {
-      deleteRecord: 'Element został usunięty',
-      addRecord: {
-        income: 'Wpływ został dodany',
-        expanse: 'Wydatek został zapisany',
-      },
-    },
-  };
-
   //pagination controllers
   const [paginationController, setPaginationController] = useState({
     page: 0,
@@ -197,10 +187,10 @@ export const LedgerWidget = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
-      handleShowSnackbar(notificationMessages.success.deleteRecord, 'success');
+      handleShowSnackbar(NOTIFICATION_MESSAGES.SUCCESS.DELETERECORDS, 'success');
     },
     onError: () => {
-      handleShowSnackbar(notificationMessages.error, 'error');
+      handleShowSnackbar(NOTIFICATION_MESSAGES.ERROR, 'error');
     },
   });
 
@@ -221,18 +211,18 @@ export const LedgerWidget = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
       if (requestBody.mode === 'INCOME') {
         handleShowSnackbar(
-          notificationMessages.success.addRecord.income,
+          NOTIFICATION_MESSAGES.SUCCESS.ADDRECORD.INCOME,
           'success',
         );
       } else {
         handleShowSnackbar(
-          notificationMessages.success.addRecord.expanse,
+          NOTIFICATION_MESSAGES.SUCCESS.ADDRECORD.EXPENSE,
           'success',
         );
       }
     },
     onError: () => {
-      handleShowSnackbar(notificationMessages.error, 'error');
+      handleShowSnackbar(NOTIFICATION_MESSAGES.ERROR, 'error');
     },
   });
 
