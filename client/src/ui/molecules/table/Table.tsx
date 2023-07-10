@@ -18,14 +18,13 @@ import {
 } from '@mui/icons-material';
 
 type TableOptions = {
-  headCells: any,
+  headCells: any[],
   rows: string[],
-  getUniqueId: any,
-  //getUniqueId: (arr: string[]) => string[],
-  deleteRecords: (selectedRecords: string[]) => any,
+  getUniqueId: (row: string) => string,
+  deleteRecords: (selectedRecords: string[]) => string,
   page: number,
   perPage: number,
-  onPageChange: any,
+  onPageChange: (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => void;
   onPerPageChange: (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => void,
@@ -59,8 +58,6 @@ export const Table = ({
     );
   };
 
-  console.log(headCells)
-
   const onDelete = () => {
     deleteRecords(selected);
     setSelected([]);
@@ -77,7 +74,6 @@ export const Table = ({
   }
 
   function TablePaginationActions({ count, page, rowsPerPage, onPageChange }: TablePaginationActionsProps) {
-    //const { count, page, rowsPerPage, onPageChange } = props;
 
     const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       onPageChange(event, 0);
