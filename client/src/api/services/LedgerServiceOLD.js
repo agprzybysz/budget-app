@@ -1,13 +1,10 @@
 import { request } from '../core/request';
 
-
-
 export class LedgerService {
   /**
    * @returns any
    * @throws ApiError
    */
-
 
   static create({ requestBody }) {
     return request({

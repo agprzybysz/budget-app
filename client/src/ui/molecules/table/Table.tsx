@@ -17,6 +17,22 @@ import {
   FirstPage,
 } from '@mui/icons-material';
 
+type TableOptions = {
+  headCells: any,
+  rows: string[],
+  getUniqueId: any,
+  //getUniqueId: (arr: string[]) => string[],
+  deleteRecords: (selectedRecords: string[]) => any,
+  page: number,
+  perPage: number,
+  onPageChange: any,
+  onPerPageChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => void,
+  total: number,
+  paginationType: "server" | "frontend",
+}
+
 export const Table = ({
   headCells,
   rows,
@@ -28,14 +44,14 @@ export const Table = ({
   onPerPageChange,
   total,
   paginationType,
-}) => {
-  const [selected, setSelected] = React.useState([]);
+}: TableOptions) => {
+  const [selected, setSelected] = React.useState<string[]>([]);
 
-  const handleSelectAllClick = (event) => {
+  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelected(event.target.checked ? rows.map((n) => getUniqueId(n)) : []);
   };
 
-  const handleClick = (event, id) => {
+  const handleClick = (event: React.MouseEvent<HTMLTableRowElement>, id: string) => {
     setSelected(
       selected.includes(id)
         ? selected.filter((selectedId) => selectedId !== id)
@@ -43,27 +59,39 @@ export const Table = ({
     );
   };
 
+  console.log(headCells)
+
   const onDelete = () => {
     deleteRecords(selected);
     setSelected([]);
   };
 
-  function TablePaginationActions(props) {
-    const { count, page, rowsPerPage, onPageChange } = props;
+  type TablePaginationActionsProps = {
+    count: number;
+    page: number;
+    rowsPerPage: number;
+    onPageChange: (
+      event: React.MouseEvent<HTMLButtonElement>,
+      newPage: number,
+    ) => void;
+  }
 
-    const handleFirstPageButtonClick = (event) => {
+  function TablePaginationActions({ count, page, rowsPerPage, onPageChange }: TablePaginationActionsProps) {
+    //const { count, page, rowsPerPage, onPageChange } = props;
+
+    const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       onPageChange(event, 0);
     };
 
-    const handlePreviousButtonClick = (event) => {
+    const handlePreviousButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       onPageChange(event, page - 1);
     };
 
-    const handleNextButtonClick = (event) => {
+    const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       onPageChange(event, page + 1);
     };
 
-    const handleLastPageButtonClick = (event) => {
+    const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
     };
 
@@ -117,46 +145,44 @@ export const Table = ({
             headCells={headCells}
           />
           <TableBody>
-            {
-              (paginationType === 'frontend'
-                ? rows.slice(page * perPage, page * perPage + perPage)
-                : rows.slice()
-              ).map((row, index) => {
-                const uniqueId = getUniqueId(row);
-                const isItemSelected = selected.includes(uniqueId);
-                const labelId = `enhanced-table-checkbox-${index}`;
+            {(paginationType === 'frontend'
+              ? rows.slice(page * perPage, page * perPage + perPage)
+              : rows.slice()
+            ).map((row, index) => {
+              const uniqueId = getUniqueId(row);
+              const isItemSelected = selected.includes(uniqueId);
+              const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    key={uniqueId}
-                    onClick={(event) => handleClick(event, uniqueId)}
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    selected={isItemSelected}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                      />
-                    </TableCell>
-                    {headCells.map((head) => {
-                      const renderedRow = head.renderCell(row) || '';
-                      return (
-                        <TableCell key={head.id} align="left">
-                          {renderedRow}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })
-            }
+              return (
+                <TableRow
+                  hover
+                  role="checkbox"
+                  key={uniqueId}
+                  onClick={(event) => handleClick(event, uniqueId)}
+                  aria-checked={isItemSelected}
+                  tabIndex={-1}
+                  selected={isItemSelected}
+                >
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      color="primary"
+                      checked={isItemSelected}
+                      inputProps={{
+                        'aria-labelledby': labelId,
+                      }}
+                    />
+                  </TableCell>
+                  {headCells.map((head) => {
+                    const renderedRow = head.renderCell(row) || '';
+                    return (
+                      <TableCell key={head.id} align="left">
+                        {renderedRow}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </MuiTable>
       </TableContainer>
