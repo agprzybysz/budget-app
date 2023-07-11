@@ -13,32 +13,62 @@ import {
   LocalizedDate,
   AddNewLedgerRecord,
 } from 'ui';
-import { Grid } from '@mui/material';
+import { Grid, Box } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LedgerService } from 'api';
-import { useSnackbar } from 'notistack';
+import { useSnackbar, VariantType } from 'notistack';
 import { useHistory } from 'react-router-dom';
-import { NOTIFICATION_MESSAGES } from '../constants'
+import { NOTIFICATION_MESSAGES } from '../constants';
+
+type PaginationController = {
+  page: number;
+  perPage: number;
+}
+
+type Row = {
+  id: string,
+  name: string,
+  categoryName: string,
+  categoryColor: string,
+  createdAt: string,
+  mode: 'INCOME' | 'EXPENSE',
+  amountInCents: number,
+}
+
+type Column = {
+  id: string,
+  label: string,
+  renderCell: (row: Row) => JSX.Element | string;
+}
+
+type LedgerRequestBody= {
+  requestBody: {
+    title: string,
+    amountInCents: number,
+    mode: 'INCOME' | 'EXPENSE',
+    categoryId: string | null,
+    }
+};
 
 export const LedgerWidget = () => {
   //pagination controllers
-  const [paginationController, setPaginationController] = useState({
+  const [paginationController, setPaginationController] = useState<PaginationController>({
     page: 0,
     perPage: 10,
   });
-  const [loading, setLoading] = React.useState();
-  const [totalRecords, setTotalRecords] = React.useState(0);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [totalRecords, setTotalRecords] = React.useState<number>(0);
 
-  const handlePageChange = (event, newPage) => {
+  const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number): void => {
     setPaginationController({
       ...paginationController,
       page: newPage,
     });
   };
 
-  const handlePerPageChange = (event) => {
+  const handlePerPageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setPaginationController({
       ...paginationController,
       page: 0,
@@ -47,11 +77,11 @@ export const LedgerWidget = () => {
   };
 
   const getTotalRecords = async () => {
-    let res = await LedgerService.findAllRecords();
+    const res = await LedgerService.findAllRecords();
     setTotalRecords(res.length);
   };
 
-  const getLedgerData = async ({ page, perPage }) => {
+  const getLedgerData = async ({ page, perPage }: {page: number, perPage: number}) => {
     return await LedgerService.findAll({
       offset: perPage * page,
       limit: perPage,
@@ -65,8 +95,8 @@ export const LedgerWidget = () => {
       const urlParams = new URLSearchParams(history.location.search);
       setPaginationController({
         ...paginationController,
-        page: +urlParams.get('page'),
-        perPage: +urlParams.get('perPage'),
+        page: Number(urlParams.get('page')),
+        perPage: Number(urlParams.get('perPage')),
       });
     }
   }, []);
@@ -76,11 +106,11 @@ export const LedgerWidget = () => {
     queryFn: () => getLedgerData(paginationController),
     onSuccess() {
       getTotalRecords();
-      const queryParams = {
-        perPage: paginationController.perPage,
+      const queryParams: PaginationController = {
         page: paginationController.page,
+        perPage: paginationController.perPage,
       };
-      const params = new URLSearchParams(queryParams).toString();
+      const params = new URLSearchParams({ perPage: queryParams.perPage.toString(), page: queryParams.page.toString() }).toString();
       history.replace({
         pathname: '/ledger',
         search: `?${params}`,
@@ -113,22 +143,22 @@ export const LedgerWidget = () => {
   }
 
   const { enqueueSnackbar } = useSnackbar();
-  const handleShowSnackbar = (text, variant) => {
+  const handleShowSnackbar = (text: string, variant: VariantType) => {
     enqueueSnackbar(text, { variant });
   };
 
-  const columns = [
+  const columns: Column[] = [
     {
       id: 'Name',
       label: 'Nazwa',
-      renderCell(row) {
+      renderCell: (row) => {
         return row.name;
       },
     },
     {
       id: 'CategoryName',
       label: 'Kategoria',
-      renderCell(row) {
+      renderCell: (row) =>  {
         return (
           <CategoryCell name={row.categoryName} color={row.categoryColor} />
         );
@@ -137,14 +167,14 @@ export const LedgerWidget = () => {
     {
       id: 'createdDate',
       label: 'Data',
-      renderCell(row) {
+      renderCell: (row) => {
         return <LocalizedDate date={row.createdAt} />;
       },
     },
     {
       id: 'amountInCents',
       label: 'Obecna kwota',
-      renderCell(row) {
+      renderCell: (row) => {
         return row.mode === 'EXPENSE' ? (
           <div style={{ color: '#FF0000' }}>
             -<Money inCents={row.amountInCents} />
@@ -159,9 +189,15 @@ export const LedgerWidget = () => {
       },
     },
   ];
-  const rows =
+
+
+  interface DataArray {
+    [index: number]: string;
+  }
+   
+  const rows: Row[] =
     isSuccess && data.length > 0
-      ? data.map((item) => {
+      ? data.map((item: any) => {
           return {
             id: item.id,
             name: item.title,
@@ -174,11 +210,11 @@ export const LedgerWidget = () => {
         })
       : [];
 
-  const getUniqueId = (arr) => arr.id;
+  const getUniqueId = (row: Row): string => row.id;
 
   const deleteRecordsMutation = useMutation({
-    mutationFn: (ids) => {
-      return LedgerService.remove(ids);
+    mutationFn: (ids: string[]) => {
+      return LedgerService.remove({ids});
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -187,22 +223,26 @@ export const LedgerWidget = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['balanceChartQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
-      handleShowSnackbar(NOTIFICATION_MESSAGES.SUCCESS.DELETERECORDS, 'success');
+      handleShowSnackbar(
+        NOTIFICATION_MESSAGES.SUCCESS.DELETERECORDS,
+        'success',
+      );
+      
     },
     onError: () => {
       handleShowSnackbar(NOTIFICATION_MESSAGES.ERROR, 'error');
     },
   });
 
-  const deleteRecords = (selectedRecords) => {
-    deleteRecordsMutation.mutate({ ids: selectedRecords });
+  const deleteRecords = (ids: string[]) => {
+    deleteRecordsMutation.mutate(ids);
   };
 
   const addRecordsMutation = useMutation({
-    mutationFn: (requestBody) => {
-      return LedgerService.create(requestBody);
+    mutationFn: (requestBody: LedgerRequestBody["requestBody"]) => {
+      return LedgerService.create({requestBody});
     },
-    onSuccess: (requestBody) => {
+    onSuccess: (requestBody: LedgerRequestBody["requestBody"]) => {
       queryClient.invalidateQueries({
         queryKey: ['ledgerDataQuery', paginationController],
       });
@@ -226,34 +266,32 @@ export const LedgerWidget = () => {
     },
   });
 
-  const addRecords = (data) => {
-    addRecordsMutation.mutate({ requestBody: data });
-  };
-
-  const [showModal, setShowModal] = useState(false);
-  const [type, setTypeModal] = useState('');
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [type, setTypeModal] = useState<string>('');
 
   const handleCloseModal = () => setShowModal(false);
 
-  const setOpenModal = (typeModal) => {
+  const setOpenModal = (typeModal: "EXPENSE" | "INCOME") => {
     setShowModal(true);
     setTypeModal(typeModal);
   };
 
-  const addNewLedgerData = (data) => {
-    addRecords(data);
+  const addNewLedgerData = (formData: LedgerRequestBody["requestBody"]) => {
+    addRecordsMutation.mutate(formData);
     setShowModal(false);
   };
 
   return (
     <>
       <Card
+        subheader=""
         title={
           <ActionHeader
             variant={'h1'}
             title="Portfel"
-            renderActions={() => (
-              <div>
+    
+            renderActions={(): JSX.Element => (
+              <Box>
                 <Button
                   variant={'outlined'}
                   color={'primary'}
@@ -261,6 +299,7 @@ export const LedgerWidget = () => {
                   startIcon={<AddIcon />}
                   className="button-iconleft"
                   onClick={() => setOpenModal('INCOME')}
+                  disabled={false}
                 >
                   Wpłać
                 </Button>
@@ -271,6 +310,7 @@ export const LedgerWidget = () => {
                   startIcon={<RemoveIcon />}
                   className="button-iconleft"
                   onClick={() => setOpenModal('EXPENSE')}
+                  disabled={false}
                 >
                   Wypłać
                 </Button>
@@ -281,7 +321,7 @@ export const LedgerWidget = () => {
                   type={type}
                   addNewLedgerData={addNewLedgerData}
                 />
-              </div>
+              </Box>
             )}
           />
         }
@@ -289,7 +329,7 @@ export const LedgerWidget = () => {
         <Grid container>
           <Grid item xs={12} container justifyContent="center">
             {isLoading && <Loader />}
-            {isError && <Error />}
+            {isError && <Error error="" />}
             {isSuccess && data.length === 0 && <NoContent />}
             {isSuccess && data.length > 0 && !loading && (
               <Table
