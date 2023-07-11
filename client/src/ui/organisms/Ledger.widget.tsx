@@ -190,11 +190,6 @@ export const LedgerWidget = () => {
     },
   ];
 
-
-  interface DataArray {
-    [index: number]: string;
-  }
-   
   const rows: Row[] =
     isSuccess && data.length > 0
       ? data.map((item: any) => {
