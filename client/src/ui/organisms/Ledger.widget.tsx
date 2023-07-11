@@ -21,13 +21,14 @@ import { LedgerService } from 'api';
 import { useSnackbar, VariantType } from 'notistack';
 import { useHistory } from 'react-router-dom';
 import { NOTIFICATION_MESSAGES } from '../constants';
+import { LedgerRequestBody } from 'api/services/LedgerService';
 
 type PaginationController = {
   page: number;
   perPage: number;
 }
 
-type Row = {
+export type Row = {
   id: string,
   name: string,
   categoryName: string,
@@ -37,20 +38,11 @@ type Row = {
   amountInCents: number,
 }
 
-type Column = {
+export type Column = {
   id: string,
   label: string,
   renderCell: (row: Row) => JSX.Element | string;
 }
-
-type LedgerRequestBody= {
-  requestBody: {
-    title: string,
-    amountInCents: number,
-    mode: 'INCOME' | 'EXPENSE',
-    categoryId: string | null,
-    }
-};
 
 export const LedgerWidget = () => {
   //pagination controllers

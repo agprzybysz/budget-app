@@ -16,22 +16,7 @@ import {
   LastPage,
   FirstPage,
 } from '@mui/icons-material';
-
-type Row = {
-  id: string,
-  name: string,
-  categoryName: string,
-  categoryColor: string,
-  createdAt: number,
-  mode: 'INCOME' | 'EXPENSE',
-  amountInCents: number,
-}
-
-type Column = {
-  id: string,
-  label: string,
-  renderCell: (row: Row) => JSX.Element | string;
-}
+import { Row, Column } from '../../organisms/Ledger.widget'
 
 type TableProps = {
   headCells: Column[],

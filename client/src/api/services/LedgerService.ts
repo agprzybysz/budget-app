@@ -1,14 +1,5 @@
 import { request } from '../core/request';
 
-type LedgerRequestBody= {
-  requestBody: {
-    title: string,
-    amountInCents: number,
-    mode: 'INCOME' | 'EXPENSE',
-    categoryId: string | null,
-  }
-};
-
 type PaginationOptions = {
   limit: number, 
   offset: number,
@@ -39,6 +30,7 @@ type LedgerResponseBodyGetData= {
     color: string
   }
 };
+
 type LedgerResponseBodyChange = {
     title: string,
     amountInCents: number,
@@ -46,6 +38,15 @@ type LedgerResponseBodyChange = {
     categoryId: string | null,
     id: string,
     createdAt: number
+};
+
+export type LedgerRequestBody = {
+  requestBody: {
+    title: string,
+    amountInCents: number,
+    mode: 'INCOME' | 'EXPENSE',
+    categoryId: string | null,
+  }
 };
 
 export class LedgerService {
