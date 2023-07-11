@@ -22,7 +22,7 @@ type Row = {
   name: string,
   categoryName: string,
   categoryColor: string,
-  createdAt: string,
+  createdAt: number,
   mode: 'INCOME' | 'EXPENSE',
   amountInCents: number,
 }

@@ -32,7 +32,7 @@ type Row = {
   name: string,
   categoryName: string,
   categoryColor: string,
-  createdAt: string,
+  createdAt: number,
   mode: 'INCOME' | 'EXPENSE',
   amountInCents: number,
 }
@@ -192,7 +192,7 @@ export const LedgerWidget = () => {
 
   const rows: Row[] =
     isSuccess && data.length > 0
-      ? data.map((item: any) => {
+      ? data.map((item) => {
           return {
             id: item.id,
             name: item.title,
