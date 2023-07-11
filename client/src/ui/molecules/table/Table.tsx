@@ -17,11 +17,27 @@ import {
   FirstPage,
 } from '@mui/icons-material';
 
-type TableOptions = {
-  headCells: any[],
-  rows: string[],
-  getUniqueId: (row: string) => string,
-  deleteRecords: (selectedRecords: string[]) => string,
+type Row = {
+  id: string,
+  name: string,
+  categoryName: string,
+  categoryColor: string,
+  createdAt: string,
+  mode: 'INCOME' | 'EXPENSE',
+  amountInCents: number,
+}
+
+type Column = {
+  id: string,
+  label: string,
+  renderCell: (row: Row) => JSX.Element | string;
+}
+
+type TableProps = {
+  headCells: Column[],
+  rows: Row[],
+  getUniqueId: (row: Row) => string,
+  deleteRecords: (selectedRecords: string[]) => void, 
   page: number,
   perPage: number,
   onPageChange: (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => void;
@@ -30,6 +46,16 @@ type TableOptions = {
   ) => void,
   total: number,
   paginationType: "server" | "frontend",
+}
+
+type TablePaginationActionsProps = {
+  count: number;
+  page: number;
+  rowsPerPage: number;
+  onPageChange: (
+    event: React.MouseEvent<HTMLButtonElement>,
+    newPage: number,
+  ) => void;
 }
 
 export const Table = ({
@@ -43,7 +69,7 @@ export const Table = ({
   onPerPageChange,
   total,
   paginationType,
-}: TableOptions) => {
+}: TableProps) => {
   const [selected, setSelected] = React.useState<string[]>([]);
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,16 +88,6 @@ export const Table = ({
     deleteRecords(selected);
     setSelected([]);
   };
-
-  type TablePaginationActionsProps = {
-    count: number;
-    page: number;
-    rowsPerPage: number;
-    onPageChange: (
-      event: React.MouseEvent<HTMLButtonElement>,
-      newPage: number,
-    ) => void;
-  }
 
   function TablePaginationActions({ count, page, rowsPerPage, onPageChange }: TablePaginationActionsProps) {
 
