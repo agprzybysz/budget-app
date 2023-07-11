@@ -25,30 +25,28 @@ type LedgerUpdate= {
     createdAt: number,
   }  
 }
-/*
+
 type LedgerResponseBodyGetData= {
   mode: 'INCOME' | 'EXPENSE',
-    title: string,
-    amountInCents: number,
-    categoryId: string,
-    createdAt: number,
+  title: string,
+  amountInCents: number,
+  categoryId: string,
+  createdAt: number,
+  id: string,
+  category: {
+    name: string,
     id: string,
-    category: {
-        name: string,
-        id: string,
-        color: string
-    }
+    color: string
+  }
 };
 type LedgerResponseBody = {
     title: string,
     amountInCents: number,
     mode: 'INCOME' | 'EXPENSE',
-    categoryId: string,
+    categoryId: string | null,
     id: string,
     createdAt: number
 };
-
-*/
 
 export class LedgerService {
   /**
@@ -56,7 +54,7 @@ export class LedgerService {
    * @throws ApiError
    */
 
-  static create({ requestBody }: LedgerRequestBody): Promise<any>  {
+  static create({ requestBody }: LedgerRequestBody): Promise<LedgerResponseBody>  {
     return request({
       method: 'POST',
       path: `/ledger`,
@@ -93,7 +91,7 @@ export class LedgerService {
    * @returns any
    * @throws ApiError
    */
-  static update({ id, requestBody }: LedgerUpdate): Promise<any> {
+  static update({ id, requestBody }: LedgerUpdate): Promise<LedgerResponseBody> {
     return request({
       method: 'PATCH',
       path: `/ledger/${id}`,
@@ -106,7 +104,7 @@ export class LedgerService {
    * @returns any
    * @throws ApiError
    */
-  static remove({ ids }: {ids: string[]}): Promise<any> {
+  static remove({ ids }: {ids: string[]}): Promise<void> {
     return ids.length === 1
       ? request({
           method: 'DELETE',
