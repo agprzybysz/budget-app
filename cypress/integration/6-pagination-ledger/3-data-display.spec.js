@@ -26,7 +26,7 @@ context('Pagination - data display - changing dataset', () => {
     cy.request({
       method: 'DELETE',
       url: 'http://localhost:4320/ledger/',
-      body: { ids: ['1', '2', '3', '4', '5', '6', '7', '8'] },
+      body: { ids: [...Array(8).keys()].map((i) => (i + 1).toString()) },
     });
     cy.visit('/ledger');
 
@@ -38,7 +38,7 @@ context('Pagination - data display - changing dataset', () => {
       });
   });
 
-  it('should enable navigation via buttons and change dataset when cliking on navigation buttons', () => {
+  it('should enable navigation via buttons and change dataset when clicking on navigation buttons', () => {
     postTestRecords(5);
     cy.visit('/ledger');
     cy.wait(1000);
@@ -49,6 +49,9 @@ context('Pagination - data display - changing dataset', () => {
     cy.get('.MuiTablePagination-root')
       .find('button[aria-label="first page"]')
       .should('be.disabled');
+    cy.get('.MuiTablePagination-root')
+      .find('.MuiTablePagination-displayedRows')
+      .contains('1–10 of 22');
     cy.location().should((loc) => {
       expect(loc.search).to.eq('?perPage=10&page=0');
     });
@@ -66,6 +69,9 @@ context('Pagination - data display - changing dataset', () => {
     cy.location().should((loc) => {
       expect(loc.search).to.eq('?perPage=10&page=1');
     });
+    cy.get('.MuiTablePagination-root')
+      .find('.MuiTablePagination-displayedRows')
+      .contains('11–20 of 22');
     cy.get('.MuiTableBody-root').children().should('have.length', 10);
 
     // test last page (3/3)
@@ -81,6 +87,9 @@ context('Pagination - data display - changing dataset', () => {
     cy.location().should((loc) => {
       expect(loc.search).to.eq('?perPage=10&page=2');
     });
+    cy.get('.MuiTablePagination-root')
+      .find('.MuiTablePagination-displayedRows')
+      .contains('21–22 of 22');
     cy.get('.MuiTableBody-root').children().should('have.length', 2);
 
     // test go to previous page (2/3)
@@ -91,6 +100,9 @@ context('Pagination - data display - changing dataset', () => {
     cy.location().should((loc) => {
       expect(loc.search).to.eq('?perPage=10&page=1');
     });
+    cy.get('.MuiTablePagination-root')
+      .find('.MuiTablePagination-displayedRows')
+      .contains('11–20 of 22');
     cy.get('.MuiTableBody-root').children().should('have.length', 10);
   });
 
@@ -98,7 +110,9 @@ context('Pagination - data display - changing dataset', () => {
     cy.request({
       method: 'DELETE',
       url: 'http://localhost:4320/ledger/',
-      body: { ids: ['16', '17'] },
+      body: {
+        ids: [...Array(2).keys()].map((i) => (i + 16).toString()),
+      },
     });
     cy.visit('/ledger');
     cy.get('.MuiTablePagination-root')

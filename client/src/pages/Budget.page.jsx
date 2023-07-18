@@ -19,15 +19,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BudgetService } from '../api';
 import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
+import { NOTIFICATION_MESSAGES } from '../ui/constants';
 
 export const BudgetPage = () => {
-  const notificationMessages = {
-    error: 'Wystąpił nieoczekiwany błąd',
-    success: {
-      addRecord: 'Budżet został zdefiniowany',
-      deleteRecord: 'Element został usunięty',
-    },
-  };
   //pagination
   const [paginationController, setPaginationController] = useState({
     page: 0,
@@ -158,10 +152,13 @@ export const BudgetPage = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetCategoryQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
-      handleShowSnackbar(notificationMessages.success.deleteRecord, 'success');
+      handleShowSnackbar(
+        NOTIFICATION_MESSAGES.SUCCESS.DELETERECORDS,
+        'success',
+      );
     },
     onError: () => {
-      handleShowSnackbar(notificationMessages.error, 'error');
+      handleShowSnackbar(NOTIFICATION_MESSAGES.ERROR, 'error');
     },
   });
 
@@ -177,10 +174,13 @@ export const BudgetPage = () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDataQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetCategoryQuery'] });
       queryClient.invalidateQueries({ queryKey: ['budgetChartQuery'] });
-      handleShowSnackbar(notificationMessages.success.addRecord, 'success');
+      handleShowSnackbar(
+        NOTIFICATION_MESSAGES.SUCCESS.ADDRECORD.BUDGET,
+        'success',
+      );
     },
     onError: () => {
-      handleShowSnackbar(notificationMessages.error, 'error');
+      handleShowSnackbar(NOTIFICATION_MESSAGES.ERROR, 'error');
     },
   });
 
