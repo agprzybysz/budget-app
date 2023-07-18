@@ -1,22 +1,23 @@
 # Opis
 
-Projekt został utworzony w ramach Dare IT React Challenge.
-W ramach Dare IT React Challenge uczestnicy otrzymywali co tydzień zadania, które pozwoliły na stworzenie i rozwój aplikacji w React.
+W ramach Dare IT React Challenge została stworzona aplikacja budżetowa przy użyciu biblioteki React.
 
 ![app screenshot](/client/src/assets/app_screenshot.PNG)
 
 ### Umiejętności nabyte podczas tworzenia aplikacji
 
-- nauka pracy z GITem
-- udoskonalenie umiejętności programowania w React
-- nauka pisania testów w Cypress
-- nauka programowania w Typescript
+- tworzenie modułów, widoków przy użyciu biblioteki ReactJS
+- zaprogramowanie kontrolek przygotowanych w Figmie w oparciu o framework MUI
+- przygotowywanie i zaprogramowanie scenariuszy testowych w Cypress
+- migracja wybranych modułów na język Typescript
+- zarządzanie repozytorium projektu przy użyciu git-a
 
 ### Wykorzystane technologie
 
 - [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactj.dev/)
 - [![MUI](https://img.shields.io/badge/MUI-%230081CB.svg?style=for-the-badge&logo=mui&logoColor=white)](https://mui.com/)
 - [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+- [![Cypress](https://img.shields.io/badge/Cypress-17202C?style=for-the-badge&logo=cypress&logoColor=white)](https://www.cypress.io/)
 
 # Pierwsze kroki
 
