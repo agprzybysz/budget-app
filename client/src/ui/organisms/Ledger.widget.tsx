@@ -21,7 +21,7 @@ import { LedgerService } from 'api';
 import { useSnackbar, VariantType } from 'notistack';
 import { useHistory } from 'react-router-dom';
 import { NOTIFICATION_MESSAGES } from '../constants';
-import { LedgerRequestBody } from 'api/services/LedgerService';
+import { LedgerRequestCreate, Mode } from 'api/services/LedgerService';
 
 type PaginationController = {
   page: number;
@@ -34,7 +34,7 @@ export type Row = {
   categoryName: string,
   categoryColor: string,
   createdAt: number,
-  mode: 'INCOME' | 'EXPENSE',
+  mode: Mode,
   amountInCents: number,
 }
 
@@ -50,8 +50,8 @@ export const LedgerWidget = () => {
     page: 0,
     perPage: 10,
   });
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [totalRecords, setTotalRecords] = React.useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [totalRecords, setTotalRecords] = useState<number>(0);
 
   const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number): void => {
     setPaginationController({
@@ -226,10 +226,10 @@ export const LedgerWidget = () => {
   };
 
   const addRecordsMutation = useMutation({
-    mutationFn: (requestBody: LedgerRequestBody["requestBody"]) => {
+    mutationFn: (requestBody: LedgerRequestCreate["requestBody"]) => {
       return LedgerService.create({requestBody});
     },
-    onSuccess: (requestBody: LedgerRequestBody["requestBody"]) => {
+    onSuccess: (requestBody: LedgerRequestCreate["requestBody"]) => {
       queryClient.invalidateQueries({
         queryKey: ['ledgerDataQuery', paginationController],
       });
@@ -263,7 +263,7 @@ export const LedgerWidget = () => {
     setTypeModal(typeModal);
   };
 
-  const addNewLedgerData = (formData: LedgerRequestBody["requestBody"]) => {
+  const addNewLedgerData = (formData: LedgerRequestCreate["requestBody"]) => {
     addRecordsMutation.mutate(formData);
     setShowModal(false);
   };

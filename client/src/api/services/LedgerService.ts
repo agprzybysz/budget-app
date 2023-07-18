@@ -1,24 +1,26 @@
 import { request } from '../core/request';
 
+export type Mode = 'INCOME' | 'EXPENSE';
+
 type PaginationOptions = {
   limit: number, 
   offset: number,
 };
 
-type LedgerUpdate= {
+type LedgerRequestUpdate= {
   id: number, 
   requestBody: {
     title: string,
     amountInCents: number,
-    mode: 'INCOME' | 'EXPENSE',
+    mode: Mode,
     categoryId: string,
     id: string,
     createdAt: number,
   }  
 }
 
-type LedgerResponseBodyGetData= {
-  mode: 'INCOME' | 'EXPENSE',
+type LedgerResponseGet= {
+  mode: Mode,
   title: string,
   amountInCents: number,
   categoryId: string,
@@ -31,20 +33,20 @@ type LedgerResponseBodyGetData= {
   }
 };
 
-type LedgerResponseBodyChange = {
+type LedgerResponseModify = {
     title: string,
     amountInCents: number,
-    mode: 'INCOME' | 'EXPENSE',
+    mode: Mode,
     categoryId: string | null,
     id: string,
     createdAt: number
 };
 
-export type LedgerRequestBody = {
+export type LedgerRequestCreate = {
   requestBody: {
     title: string,
     amountInCents: number,
-    mode: 'INCOME' | 'EXPENSE',
+    mode: Mode,
     categoryId: string | null,
   }
 };
@@ -55,7 +57,7 @@ export class LedgerService {
    * @throws ApiError
    */
 
-  static create({ requestBody }: LedgerRequestBody): Promise<LedgerResponseBodyChange>  {
+  static create({ requestBody }: LedgerRequestCreate): Promise<LedgerResponseModify>  {
     return request({
       method: 'POST',
       path: `/ledger`,
@@ -70,7 +72,7 @@ export class LedgerService {
    * @returns any
    * @throws ApiError
    */
-  static findAll({ offset, limit }: PaginationOptions): Promise<LedgerResponseBodyGetData[]> {
+  static findAll({ offset, limit }: PaginationOptions): Promise<LedgerResponseGet[]> {
     return request({
       method: 'GET',
       path: `/ledger?limit=${limit}&offset=${offset}`,
@@ -81,7 +83,7 @@ export class LedgerService {
    * @returns any
    * @throws ApiError
    */
-  static findOne({ id }: {id: string}): Promise<LedgerResponseBodyGetData> {
+  static findOne({ id }: {id: string}): Promise<LedgerResponseGet> {
     return request({
       method: 'GET',
       path: `/ledger/${id}`,
@@ -92,7 +94,7 @@ export class LedgerService {
    * @returns any
    * @throws ApiError
    */
-  static update({ id, requestBody }: LedgerUpdate): Promise<LedgerResponseBodyChange> {
+  static update({ id, requestBody }: LedgerRequestUpdate): Promise<LedgerResponseModify> {
     return request({
       method: 'PATCH',
       path: `/ledger/${id}`,
@@ -121,7 +123,7 @@ export class LedgerService {
    * @returns any
    * @throws ApiError
    */
-  static findAllRecords(): Promise<LedgerResponseBodyGetData[]>  {
+  static findAllRecords(): Promise<LedgerResponseGet[]>  {
     return request({
       method: 'GET',
       path: `/ledger`,
