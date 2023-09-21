@@ -21,29 +21,7 @@ import { LedgerService } from 'api';
 import { useHistory } from 'react-router-dom';
 import { useSnackbarHandler } from 'hooks/useSnackbarHandler';
 import { NOTIFICATION_MESSAGES } from '../constants';
-import { LedgerRequestCreate, Mode } from 'api/services/LedgerService';
-
-type PaginationController = {
-  page: number;
-  perPage: number;
-};
-
-export type Row = {
-  id: string;
-  name: string;
-  categoryName: string;
-  categoryColor: string;
-  createdAt: number;
-  mode: Mode;
-  amountInCents: number;
-};
-
-export type Column = {
-  id: string;
-  label: string;
-  renderCell: (row: Row) => JSX.Element | string;
-};
-
+import { PaginationController, Column, Row, LedgerRequestCreate } from 'types/types';
 export const LedgerWidget = () => {
   //pagination controllers
   const [paginationController, setPaginationController] =

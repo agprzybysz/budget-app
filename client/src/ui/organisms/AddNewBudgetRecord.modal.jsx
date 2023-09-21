@@ -59,7 +59,6 @@ export const AddNewBudgetRecord = ({
     }
   }, [isOpen, isSubmitSuccessful]);
 
-  
   const getContent = (data) => (
     <Box component="form" noValidate autoComplete="off">
       <Controller

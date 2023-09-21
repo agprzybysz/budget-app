@@ -16,7 +16,7 @@ import {
   LastPage,
   FirstPage,
 } from '@mui/icons-material';
-import { Row, Column } from '../../organisms/Ledger.widget';
+import { Row, Column } from '../../../types/types'
 
 type TableProps = {
   headCells: Column[];
