@@ -17,7 +17,7 @@ export const NoContent = () => {
       <Box
         component="img"
         src={NoContentImage}
-        alt="no_content"
+        alt="No content"
         sx={{
           height: '202px',
           width: '202px',

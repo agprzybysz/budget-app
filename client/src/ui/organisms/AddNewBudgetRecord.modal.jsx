@@ -30,7 +30,7 @@ export const AddNewBudgetRecord = ({
     handleSubmit,
     control,
     reset,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitSuccessful },
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: defaultValues,
@@ -54,10 +54,10 @@ export const AddNewBudgetRecord = ({
   });
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen || isSubmitSuccessful) {
       reset();
     }
-  }, [isOpen]);
+  }, [isOpen, isSubmitSuccessful]);
 
   const getContent = (data) => (
     <Box component="form" noValidate autoComplete="off">

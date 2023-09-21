@@ -55,7 +55,7 @@ export const AddNewLedgerRecord = ({
     control,
     reset,
 
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitSuccessful },
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: defaultValues,
@@ -72,8 +72,10 @@ export const AddNewLedgerRecord = ({
   };
 
   useEffect(() => {
-    if (isOpen) reset();
-  }, [isOpen]);
+    if (isOpen || isSubmitSuccessful) {
+      reset();
+    }
+  }, [isOpen, isSubmitSuccessful]);
 
   const getContent = (data, type) => (
     <Box component="form" noValidate autoComplete="off">

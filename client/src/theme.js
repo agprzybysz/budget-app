@@ -24,16 +24,19 @@ let theme = createTheme({
     error: {
       main: '#FF5D5D',
       light: '#FCECE6',
+      dark: '#FDE8E0',
       contrastText: '#fff',
     },
     success: {
       main: '#00A980',
       light: '#DBEBDB',
+      dark: '#66BB6A',
       contrastText: '#fff',
     },
     warning: {
       main: '#FFA726',
       light: '#FFF5D2',
+      dark: '#B28C09',
       contrastText: '#fff',
     },
     background: {
@@ -46,6 +49,7 @@ theme = createTheme(theme, {
   typography: {
     fontSize: 16,
     fontWeightLight: 300,
+    fontFamily: 'Inter, sans-serif',
     h1: {
       fontWeight: 700,
       lineHeight: 1.2,
@@ -142,6 +146,165 @@ theme = createTheme(theme, {
       styleOverrides: {
         root: {
           borderRadius: theme.shape.borderRadius,
+        },
+      },
+    },
+    MuiButton: {
+      defaultProps: {
+        variant: 'outlined',
+      },
+      styleOverrides: {
+        root: {
+          borderRadius: '4px',
+          textTransform: 'none',
+          height: '34px',
+          fontWeight: '500',
+          lineHeight: '22px',
+          marginRight: '10px',
+        },
+        containedPrimary: {
+          backgroundColor: theme.palette.primary.main,
+          color: theme.palette.primary.contrastText,
+          boxShadow: 'none',
+          ':hover': {
+            backgroundColor: theme.palette.primary.dark,
+            color: theme.palette.secondary.main,
+            boxShadow: 'none',
+          },
+          ':active': {
+            backgroundColor: theme.palette.primary.dark,
+            color: theme.palette.secondary.main,
+          },
+          ':disabled': {
+            backgroundColor: 'rgba(51, 51, 51, 0.07)',
+            color: 'rgba(51, 51, 51, 0.25)',
+          },
+        },
+        containedError: {
+          backgroundColor: theme.palette.error.light,
+          color: theme.palette.error.main,
+          boxShadow: 'none',
+          ':hover': {
+            backgroundColor: theme.palette.error.main,
+            color: theme.palette.error.contrastText,
+            boxShadow: 'none',
+          },
+          ':active': {
+            backgroundColor: theme.palette.error.light,
+            color: theme.palette.error.main,
+          },
+          ':disabled': {
+            backgroundColor: 'rgba(51, 51, 51, 0.07)',
+            color: 'rgba(51, 51, 51, 0.25)',
+          },
+        },
+        containedSuccess: {
+          backgroundColor: theme.palette.success.light,
+          color: theme.palette.success.main,
+          boxShadow: 'none',
+          ':hover': {
+            backgroundColor: theme.palette.success.main,
+            color: theme.palette.success.contrastText,
+            boxShadow: 'none',
+          },
+          ':active': {
+            backgroundColor: theme.palette.success.light,
+            color: theme.palette.success.main,
+          },
+          ':disabled': {
+            backgroundColor: 'rgba(51, 51, 51, 0.07)',
+            color: 'rgba(51, 51, 51, 0.25)',
+          },
+        },
+        containedWarning: {
+          backgroundColor: theme.palette.warning.light,
+          color: theme.palette.warning.dark,
+          boxShadow: 'none',
+          ':hover': {
+            backgroundColor: theme.palette.warning.main,
+            color: theme.palette.warning.contrastText,
+            boxShadow: 'none',
+          },
+          ':active': {
+            backgroundColor: theme.palette.warning.light,
+            color: theme.palette.warning.dark,
+          },
+          ':disabled': {
+            backgroundColor: 'rgba(51, 51, 51, 0.07)',
+            color: 'rgba(51, 51, 51, 0.25)',
+          },
+        },
+        outlinedPrimary: {
+          backgroundColor: theme.palette.secondary.main,
+          color: theme.palette.primary.main,
+          borderColor: theme.palette.secondary.main,
+          ':hover': {
+            backgroundColor: theme.palette.secondary.dark,
+            color: theme.palette.primary.dark,
+          },
+          ':active': {
+            backgroundColor: theme.palette.secondary.dark,
+            color: theme.palette.primary.dark,
+          },
+          ':disabled': {
+            backgroundColor: 'rgba(51, 51, 51, 0.07)',
+            color: 'rgba(51, 51, 51, 0.25)',
+            borderColor: 'rgba(51, 51, 51, 0.07)',
+          },
+        },
+        outlinedError: {
+          backgroundColor: theme.palette.error.contrastText,
+          color: theme.palette.error.main,
+          border: '1px solid theme.palette.error.main',
+          ':hover': {
+            backgroundColor: theme.palette.error.dark,
+            color: theme.palette.error.main,
+          },
+          ':active': {
+            backgroundColor: theme.palette.error.dark,
+            color: theme.palette.error.main,
+          },
+          ':disabled': {
+            backgroundColor: theme.palette.error.contrastTex,
+            color: 'rgba(51, 51, 51, 0.25)',
+            borderColor: theme.palette.error.contrastText,
+          },
+        },
+        outlinedSuccess: {
+          backgroundColor: theme.palette.success.contrastText,
+          color: theme.palette.success.main,
+          border: '1px solid theme.palette.success.dark',
+          ':hover': {
+            backgroundColor: theme.palette.success.light,
+            color: theme.palette.success.main,
+          },
+          ':active': {
+            backgroundColor: theme.palette.success.light,
+            color: theme.palette.success.main,
+          },
+          ':disabled': {
+            backgroundColor: theme.palette.success.contrastText,
+            color: 'rgba(51, 51, 51, 0.25)',
+            borderColor: theme.palette.success.contrastText,
+          },
+        },
+        outlinedWarning: {
+          backgroundColor: theme.palette.warning.contrastText,
+          color: theme.palette.warning.main,
+          border: '1px solid theme.palette.warning.main',
+          ':hover': {
+            backgroundColor: theme.palette.warning.light,
+            color: theme.palette.warning.main,
+          },
+          ':active': {
+            backgroundColor: theme.palette.warning.light,
+            color: theme.palette.warning.main,
+          },
+          ':disabled': {
+            backgroundColor: theme.palette.warning.contrastText,
+            color: 'rgba(51, 51, 51, 0.25)',
+            borderColor: theme.palette.warning.contrastText,
+          },
         },
       },
     },

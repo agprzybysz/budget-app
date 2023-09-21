@@ -18,49 +18,34 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { LedgerService } from 'api';
-import { useSnackbar, VariantType } from 'notistack';
 import { useHistory } from 'react-router-dom';
+import { useSnackbarHandler } from 'hooks/useSnackbarHandler';
 import { NOTIFICATION_MESSAGES } from '../constants';
-import { LedgerRequestCreate, Mode } from 'api/services/LedgerService';
-
-type PaginationController = {
-  page: number;
-  perPage: number;
-}
-
-export type Row = {
-  id: string,
-  name: string,
-  categoryName: string,
-  categoryColor: string,
-  createdAt: number,
-  mode: Mode,
-  amountInCents: number,
-}
-
-export type Column = {
-  id: string,
-  label: string,
-  renderCell: (row: Row) => JSX.Element | string;
-}
-
+import { PaginationController, Column, Row, LedgerRequestCreate } from 'types/types';
 export const LedgerWidget = () => {
   //pagination controllers
-  const [paginationController, setPaginationController] = useState<PaginationController>({
-    page: 0,
-    perPage: 10,
-  });
+  const [paginationController, setPaginationController] =
+    useState<PaginationController>({
+      page: 0,
+      perPage: 10,
+    });
   const [loading, setLoading] = useState<boolean>(false);
   const [totalRecords, setTotalRecords] = useState<number>(0);
+  const { handleShowSnackbar } = useSnackbarHandler();
 
-  const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number): void => {
+  const handlePageChange = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ): void => {
     setPaginationController({
       ...paginationController,
       page: newPage,
     });
   };
 
-  const handlePerPageChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handlePerPageChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
     setPaginationController({
       ...paginationController,
       page: 0,
@@ -73,7 +58,13 @@ export const LedgerWidget = () => {
     setTotalRecords(res.length);
   };
 
-  const getLedgerData = async ({ page, perPage }: {page: number, perPage: number}) => {
+  const getLedgerData = async ({
+    page,
+    perPage,
+  }: {
+    page: number;
+    perPage: number;
+  }) => {
     return await LedgerService.findAll({
       offset: perPage * page,
       limit: perPage,
@@ -102,7 +93,10 @@ export const LedgerWidget = () => {
         page: paginationController.page,
         perPage: paginationController.perPage,
       };
-      const params = new URLSearchParams({ perPage: queryParams.perPage.toString(), page: queryParams.page.toString() }).toString();
+      const params = new URLSearchParams({
+        perPage: queryParams.perPage.toString(),
+        page: queryParams.page.toString(),
+      }).toString();
       history.replace({
         pathname: '/ledger',
         search: `?${params}`,
@@ -134,11 +128,6 @@ export const LedgerWidget = () => {
     }));
   }
 
-  const { enqueueSnackbar } = useSnackbar();
-  const handleShowSnackbar = (text: string, variant: VariantType) => {
-    enqueueSnackbar(text, { variant });
-  };
-
   const columns: Column[] = [
     {
       id: 'Name',
@@ -150,7 +139,7 @@ export const LedgerWidget = () => {
     {
       id: 'CategoryName',
       label: 'Kategoria',
-      renderCell: (row) =>  {
+      renderCell: (row) => {
         return (
           <CategoryCell name={row.categoryName} color={row.categoryColor} />
         );
@@ -201,7 +190,7 @@ export const LedgerWidget = () => {
 
   const deleteRecordsMutation = useMutation({
     mutationFn: (ids: string[]) => {
-      return LedgerService.remove({ids});
+      return LedgerService.remove({ ids });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -214,7 +203,6 @@ export const LedgerWidget = () => {
         NOTIFICATION_MESSAGES.SUCCESS.DELETERECORDS,
         'success',
       );
-      
     },
     onError: () => {
       handleShowSnackbar(NOTIFICATION_MESSAGES.ERROR, 'error');
@@ -226,10 +214,10 @@ export const LedgerWidget = () => {
   };
 
   const addRecordsMutation = useMutation({
-    mutationFn: (requestBody: LedgerRequestCreate["requestBody"]) => {
-      return LedgerService.create({requestBody});
+    mutationFn: (requestBody: LedgerRequestCreate['requestBody']) => {
+      return LedgerService.create({ requestBody });
     },
-    onSuccess: (requestBody: LedgerRequestCreate["requestBody"]) => {
+    onSuccess: (requestBody: LedgerRequestCreate['requestBody']) => {
       queryClient.invalidateQueries({
         queryKey: ['ledgerDataQuery', paginationController],
       });
@@ -258,12 +246,12 @@ export const LedgerWidget = () => {
 
   const handleCloseModal = () => setShowModal(false);
 
-  const setOpenModal = (typeModal: "EXPENSE" | "INCOME") => {
+  const setOpenModal = (typeModal: 'EXPENSE' | 'INCOME') => {
     setShowModal(true);
     setTypeModal(typeModal);
   };
 
-  const addNewLedgerData = (formData: LedgerRequestCreate["requestBody"]) => {
+  const addNewLedgerData = (formData: LedgerRequestCreate['requestBody']) => {
     addRecordsMutation.mutate(formData);
     setShowModal(false);
   };
@@ -276,7 +264,6 @@ export const LedgerWidget = () => {
           <ActionHeader
             variant={'h1'}
             title="Portfel"
-    
             renderActions={(): JSX.Element => (
               <Box>
                 <Button

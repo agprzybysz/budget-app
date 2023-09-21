@@ -17,9 +17,19 @@ import { Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BudgetService } from '../api';
-import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
+import { useSnackbarHandler } from 'hooks/useSnackbarHandler';
 import { NOTIFICATION_MESSAGES } from '../ui/constants';
+
+const calculateBudgetStatus = (budget) => {
+  if (budget.currentSpending === budget.amountInCents) {
+    return 'Wykorzystany';
+  } else if (budget.currentSpending > budget.amountInCents) {
+    return 'Przekroczenie';
+  } else {
+    return 'W normie';
+  }
+};
 
 export const BudgetPage = () => {
   //pagination
@@ -27,6 +37,8 @@ export const BudgetPage = () => {
     page: 0,
     perPage: 10,
   });
+
+  const { handleShowSnackbar } = useSnackbarHandler();
 
   const handlePageChange = (event, newPage) => {
     setPaginationController({
@@ -76,12 +88,6 @@ export const BudgetPage = () => {
     queryFn: () => getBudgetData(),
   });
 
-  const { enqueueSnackbar } = useSnackbar();
-
-  const handleShowSnackbar = (text, variant) => {
-    enqueueSnackbar(text, { variant });
-  };
-
   const columns = [
     {
       id: 'categoryName',
@@ -129,12 +135,7 @@ export const BudgetPage = () => {
         ),
         amountInCents: <Money inCents={item.amountInCents} />,
         currentSpending: <Money inCents={item.currentSpending} />,
-        budgetStatus:
-          item.currentSpending === item.amountInCents
-            ? 'Wykorzystany'
-            : item.currentSpending > item.amountInCents
-            ? 'Przekroczenie'
-            : 'W normie',
+        budgetStatus: calculateBudgetStatus(item),
         createdAt: <LocalizedDate date={item.createdAt} />,
       };
       return properties;
@@ -187,10 +188,6 @@ export const BudgetPage = () => {
   const addRecords = (data) => {
     addRecordsMutation.mutate({ requestBody: data });
   };
-
-  useMutation((id) => {
-    return BudgetService.remove(id);
-  });
 
   const [showModal, setShowModal] = useState(false);
 

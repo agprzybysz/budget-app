@@ -1,9 +1,11 @@
 import * as React from 'react';
-import Modal from '@mui/material/Modal';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
+import {
+  Modal as MuiModal,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+} from '@mui/material';
 import { Button } from 'ui';
 
 const styleModal = {
@@ -21,7 +23,7 @@ const styleModal = {
   justifyContent: 'space-between',
 };
 
-export function AppModal({
+export function Modal({
   description,
   children,
   disabled,
@@ -31,7 +33,7 @@ export function AppModal({
 }) {
   return (
     <div>
-      <Modal
+      <MuiModal
         open={isOpen}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
@@ -65,7 +67,7 @@ export function AppModal({
             </Button>
           </CardActions>
         </Card>
-      </Modal>
+      </MuiModal>
     </div>
   );
 }

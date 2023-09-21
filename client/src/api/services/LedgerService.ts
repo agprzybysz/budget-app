@@ -1,55 +1,5 @@
 import { request } from '../core/request';
-
-export type Mode = 'INCOME' | 'EXPENSE';
-
-type PaginationOptions = {
-  limit: number, 
-  offset: number,
-};
-
-type LedgerRequestUpdate= {
-  id: number, 
-  requestBody: {
-    title: string,
-    amountInCents: number,
-    mode: Mode,
-    categoryId: string,
-    id: string,
-    createdAt: number,
-  }  
-}
-
-type LedgerResponseGet= {
-  mode: Mode,
-  title: string,
-  amountInCents: number,
-  categoryId: string,
-  createdAt: number,
-  id: string,
-  category: {
-    name: string,
-    id: string,
-    color: string
-  }
-};
-
-type LedgerResponseModify = {
-    title: string,
-    amountInCents: number,
-    mode: Mode,
-    categoryId: string | null,
-    id: string,
-    createdAt: number
-};
-
-export type LedgerRequestCreate = {
-  requestBody: {
-    title: string,
-    amountInCents: number,
-    mode: Mode,
-    categoryId: string | null,
-  }
-};
+import { LedgerRequestCreate, LedgerRequestUpdate, LedgerResponseGet, LedgerResponseModify, PaginationOptions } from 'types/types';
 
 export class LedgerService {
   /**

@@ -14,7 +14,7 @@ export { NoResult } from './atoms/NoResult';
 // molecules
 export { CategoryCell } from './molecules/CategoryCell';
 export { Table } from './molecules/table/Table';
-export { AppModal as Modal } from './molecules/Modal';
+export { Modal } from './molecules/Modal';
 
 // organisms
 export { AppBar } from './organisms/AppBar';
