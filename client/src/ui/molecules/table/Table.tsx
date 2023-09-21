@@ -16,22 +16,23 @@ import {
   LastPage,
   FirstPage,
 } from '@mui/icons-material';
-import { Row, Column } from '../../organisms/Ledger.widget'
+import { Row, Column } from '../../organisms/Ledger.widget';
 
 type TableProps = {
-  headCells: Column[],
-  rows: Row[],
-  getUniqueId: (row: Row) => string,
-  deleteRecords: (selectedRecords: string[]) => void, 
-  page: number,
-  perPage: number,
-  onPageChange: (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => void;
-  onPerPageChange: (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => void,
-  total: number,
-  paginationType: "server" | "frontend",
-}
+  headCells: Column[];
+  rows: Row[];
+  getUniqueId: (row: Row) => string;
+  deleteRecords: (selectedRecords: string[]) => void;
+  page: number;
+  perPage: number;
+  onPageChange: (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
+  ) => void;
+  onPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  total: number;
+  paginationType: 'server' | 'frontend';
+};
 
 type TablePaginationActionsProps = {
   count: number;
@@ -41,7 +42,7 @@ type TablePaginationActionsProps = {
     event: React.MouseEvent<HTMLButtonElement>,
     newPage: number,
   ) => void;
-}
+};
 
 export const Table = ({
   headCells,
@@ -61,7 +62,10 @@ export const Table = ({
     setSelected(event.target.checked ? rows.map((n) => getUniqueId(n)) : []);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLTableRowElement>, id: string) => {
+  const handleClick = (
+    event: React.MouseEvent<HTMLTableRowElement>,
+    id: string,
+  ) => {
     setSelected(
       selected.includes(id)
         ? selected.filter((selectedId) => selectedId !== id)
@@ -74,28 +78,23 @@ export const Table = ({
     setSelected([]);
   };
 
-  function TablePaginationActions({ count, page, rowsPerPage, onPageChange }: TablePaginationActionsProps) {
+  function TablePaginationActions({
+    count,
+    page,
+    rowsPerPage,
+    onPageChange,
+  }: TablePaginationActionsProps) {
+    const handlePageChange =
+      (newPage: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
+        onPageChange(event, newPage);
+      };
 
-    const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      onPageChange(event, 0);
-    };
-
-    const handlePreviousButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      onPageChange(event, page - 1);
-    };
-
-    const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      onPageChange(event, page + 1);
-    };
-
-    const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-    };
+    const totalPages = Math.ceil(count / rowsPerPage);
 
     return (
       <Box sx={{ flexShrink: 0, ml: 1 }}>
         <IconButton
-          onClick={handleFirstPageButtonClick}
+          onClick={handlePageChange(0)}
           disabled={page === 0}
           aria-label="first page"
           sx={{ pr: 0, pl: 0.5 }}
@@ -103,7 +102,7 @@ export const Table = ({
           <FirstPage />
         </IconButton>
         <IconButton
-          onClick={handlePreviousButtonClick}
+          onClick={handlePageChange(page - 1)}
           disabled={page === 0}
           aria-label="previous page"
           sx={{ pr: 0, pl: 0.5 }}
@@ -111,16 +110,16 @@ export const Table = ({
           <KeyboardArrowLeft />
         </IconButton>
         <IconButton
-          onClick={handleNextButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          onClick={handlePageChange(page + 1)}
+          disabled={page >= totalPages - 1}
           aria-label="next page"
           sx={{ pr: 0, pl: 0.5 }}
         >
           <KeyboardArrowRight />
         </IconButton>
         <IconButton
-          onClick={handleLastPageButtonClick}
-          disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+          onClick={handlePageChange(totalPages - 1)}
+          disabled={page >= totalPages - 1}
           aria-label="last page"
           sx={{ pr: 0, pl: 0.5 }}
         >
